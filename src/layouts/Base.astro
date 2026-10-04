@@ -39,10 +39,10 @@ if (Astro.cache?.enabled) {
 }
 
 const settings = settingsResult.data;
-const siteTitle = settings?.title || "Acme";
+const siteTitle = settings?.title || "Unsere Häuser";
 const fullTitle = title ? (title.includes(siteTitle) ? title : `${title} — ${siteTitle}`) : siteTitle;
 const siteDescription =
-	settings?.tagline || "Build products people actually want";
+	settings?.tagline || "";
 const siteLogo = settings.logo?.url ? settings.logo : null;
 const menu = menuResult.data;
 const footerProduct = footerProductResult.data;
@@ -50,9 +50,9 @@ const footerCompany = footerCompanyResult.data;
 const footerSupport = footerSupportResult.data;
 
 const footerColumns = [
-	{ heading: "Product", menu: footerProduct },
-	{ heading: "Company", menu: footerCompany },
-	{ heading: "Support", menu: footerSupport },
+	{ heading: "Angebot", menu: footerProduct },
+	{ heading: "Über uns", menu: footerCompany },
+	{ heading: "Kontakt", menu: footerSupport },
 ].filter((col) => col.menu && col.menu.items.length > 0);
 
 const pageCtx = createPublicPageContext({
@@ -73,7 +73,7 @@ const isLoggedIn = !!Astro.locals.user;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="de-CH">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -124,7 +124,6 @@ const isLoggedIn = !!Astro.locals.user;
 				</div>
 				<div class="nav-actions">
 					{isLoggedIn && <a href="/_emdash/admin" class="nav-admin">Admin</a>}
-					<a href="/contact" class="btn btn-primary nav-cta">Get Started</a>
 				</div>
 			</nav>
 		</header>
@@ -149,7 +148,7 @@ const isLoggedIn = !!Astro.locals.user;
 						}
 					</span>
 					<p class="footer-tagline">
-						{settings?.tagline || "Build something amazing"}
+						{settings?.tagline || ""}
 					</p>
 				</div>
 				<div class="footer-links">
@@ -173,7 +172,7 @@ const isLoggedIn = !!Astro.locals.user;
 			<div class="footer-bottom">
 				<p>
 					&copy; {new Date().getFullYear()}
-					{siteTitle}. All rights reserved.
+					{siteTitle}. Alle Rechte vorbehalten.
 				</p>
 				<div class="theme-switcher">
 					<button
@@ -181,26 +180,23 @@ const isLoggedIn = !!Astro.locals.user;
 						class="theme-btn"
 						data-theme="light"
 						aria-pressed="false"
-						aria-label="Light mode">Light</button
+						aria-label="Heller Modus">Hell</button
 					>
 					<button
 						type="button"
 						class="theme-btn"
 						data-theme="dark"
 						aria-pressed="false"
-						aria-label="Dark mode">Dark</button
+						aria-label="Dunkler Modus">Dunkel</button
 					>
 					<button
 						type="button"
 						class="theme-btn"
 						data-theme="system"
 						aria-pressed="false"
-						aria-label="System theme">System</button
+						aria-label="Systemeinstellung">System</button
 					>
 				</div>
-				<p class="footer-powered">
-					Powered by <a href="https://emdashcms.com">EmDash</a>
-				</p>
 			</div>
 		</footer>
 
