@@ -6,7 +6,7 @@ import Base from "../layouts/Base.astro";
 
 let haeuser: any[] = [];
 try {
-	const result = await getEmDashCollection("haeuser", {
+	const result = await getEmDashCollection("hauser", {
 		status: "published",
 		orderBy: { created_at: "asc" },
 		limit: 50,

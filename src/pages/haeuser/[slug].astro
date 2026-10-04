@@ -7,7 +7,7 @@ import Base from "../../layouts/Base.astro";
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect("/404");
 
-const { entry: haus, cacheHint } = await getEmDashEntry("haeuser", slug);
+const { entry: haus, cacheHint } = await getEmDashEntry("hauser", slug);
 if (!haus) return Astro.redirect("/404");
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
@@ -33,7 +33,7 @@ const eckdaten = [
 	description={seo.description}
 	image={seo.ogImage}
 	canonical={seo.canonical}
-	content={{ collection: "haeuser", id: d.id, slug: haus.id }}
+	content={{ collection: "hauser", id: d.id, slug: haus.id }}
 >
 	<article class="container haus">
 		<a href="/" class="zurueck">← Alle Häuser</a>
