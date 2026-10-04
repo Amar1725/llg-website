@@ -1,32 +1,76 @@
 /*
-  theme.css -- your theme overrides. This is the file to edit to
-  retheme the site.
+  theme.css -- Design "Stein & Moos" für die Häuser-Seite.
 
-  Every design token lives in src/styles/tokens.css (colors, gradients,
-  type scale, spacing, layout, shadows) with its default value. Override
-  any of them here: declarations in this file are unlayered, so they
-  always beat the @layer base defaults in tokens.css.
+  Farben aus Baumaterialien: kühler Kalkstein als Grund, Schiefer für
+  Text, Moos als einzige Akzentfarbe, Lärchenholz nur für Fokus und
+  feine Details. Keine Verläufe, keine Schatten: die Fotos der Häuser
+  tragen die Seite.
 
-  Colors are defined with light-dark(). Overriding with a plain color
-  changes light and dark mode at once; use light-dark(<light>, <dark>)
-  to set different values per mode.
-
-  Rebranding usually only needs --color-brand-* and --color-accent-* --
-  the gradient tokens follow automatically. For a flat, gradient-free
-  brand, set the --gradient-* tokens to solid colors.
-
-  Webfonts are loaded in astro.config.mjs (--font-body). Swap the loaded
-  font there; use overrides here for system fonts or a separate heading
-  face.
-
-  Example:
-
-  :root {
-    --color-brand: light-dark(#0d9488, #2dd4bf);
-    --color-accent: #f59e0b;
-    --font-weight-display: 700;
-  }
+  Schriften (geladen in astro.config.mjs):
+  - Gloock (--font-display) für Titel und Hausnamen
+  - Hanken Grotesk (--font-body) für Fliesstext und Eckdaten
 */
 
 :root {
+	/* Farben: light-dark(<hell>, <dunkel>) */
+	--color-bg: light-dark(#ecede8, #191d1e); /* Kalkstein / Nachtschiefer */
+	--color-surface: light-dark(#e2e4dd, #222728);
+	--color-text: light-dark(#22282a, #e7e8e3); /* Schiefer */
+	--color-muted: light-dark(#6a706c, #9aa19c); /* Nebel */
+	--color-border: light-dark(#cdd1c9, #343a3b); /* Fuge */
+	--color-brand: light-dark(#3d5544, #9dbfa7); /* Moos */
+	--color-brand-strong: light-dark(#2e4334, #b5d1bd);
+	--color-brand-soft: light-dark(#5f7a66, #7fa38a);
+	--color-accent: light-dark(#9c6b3f, #c99a6c); /* Lärche */
+	--color-accent-soft: light-dark(#b98a5e, #d8b18b);
+	--color-on-brand: light-dark(#ecede8, #191d1e);
+
+	/* Flach statt Verlauf */
+	--gradient-brand: var(--color-brand);
+	--gradient-brand-strong: var(--color-brand-strong);
+	--gradient-brand-soft: var(--color-brand-soft);
+	--gradient-headline: var(--color-text);
+
+	/* Typografie */
+	--font-heading: var(--font-display), Georgia, serif;
+	--font-weight-heading: 400;
+	--font-weight-display: 400;
+	--tracking-tight: -0.015em;
+	--tracking-snug: -0.01em;
+	--leading-normal: 1.65;
+
+	/* Formen */
+	--radius-sm: 2px;
+	--radius: 3px;
+	--radius-lg: 4px;
+	--shadow-sm: none;
+	--shadow: none;
+	--shadow-lg: none;
+	--shadow-xl: none;
+
+	--wide-width: 1280px;
+}
+
+@supports not (color: light-dark(#000, #fff)) {
+	:root {
+		--color-bg: #ecede8;
+		--color-surface: #e2e4dd;
+		--color-text: #22282a;
+		--color-muted: #6a706c;
+		--color-border: #cdd1c9;
+		--color-brand: #3d5544;
+		--color-brand-strong: #2e4334;
+		--color-accent: #9c6b3f;
+		--color-on-brand: #ecede8;
+	}
+}
+
+::selection {
+	background: var(--color-brand);
+	color: var(--color-on-brand);
+}
+
+:focus-visible {
+	outline: 2px solid var(--color-accent);
+	outline-offset: 3px;
 }

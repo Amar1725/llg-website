@@ -80,6 +80,7 @@ const isLoggedIn = !!Astro.locals.user;
 		<title>{fullTitle}</title>
 		<EmDashHead page={pageCtx} />
 		<Font cssVariable="--font-body" preload />
+		<Font cssVariable="--font-display" preload />
 		<script is:inline>
 			// Apply an explicit theme choice immediately to prevent flash.
 			// With no cookie, color-scheme: light dark follows the OS.
@@ -472,13 +473,11 @@ const isLoggedIn = !!Astro.locals.user;
 			}
 
 			.site-logo {
-				font-size: var(--font-size-xl);
-				font-weight: var(--font-weight-display);
+				font-family: var(--font-heading);
+				font-size: var(--font-size-2xl);
+				font-weight: 400;
 				letter-spacing: var(--tracking-tight);
-				background: var(--gradient-brand);
-				-webkit-background-clip: text;
-				-webkit-text-fill-color: transparent;
-				background-clip: text;
+				color: var(--color-text);
 			}
 
 			.site-logo-img {
@@ -543,8 +542,9 @@ const isLoggedIn = !!Astro.locals.user;
 			}
 
 			.footer-logo {
+				font-family: var(--font-heading);
 				font-size: var(--font-size-xl);
-				font-weight: var(--font-weight-display);
+				font-weight: 400;
 				letter-spacing: var(--tracking-tight);
 			}
 

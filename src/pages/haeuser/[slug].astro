@@ -35,49 +35,47 @@ const eckdaten = [
 	canonical={seo.canonical}
 	content={{ collection: "hauser", id: d.id, slug: haus.id }}
 >
-	<article class="container haus">
-		<a href="/" class="zurueck">← Alle Häuser</a>
-
-		<h1 {...haus.edit.title}>{d.title}</h1>
-		{d.ort && <p class="ort" {...haus.edit.ort}>{d.ort}</p>}
+	<article class="haus">
+		<header class="kopf container">
+			<a href="/" class="zurueck">Zurück zur Übersicht</a>
+			<h1 {...haus.edit.title}>{d.title}</h1>
+			{d.ort && <p class="ort" {...haus.edit.ort}>{d.ort}</p>}
+		</header>
 
 		{
 			d.titelbild && (
-				<div class="titelbild" {...haus.edit.titelbild}>
+				<div class="titelbild container" {...haus.edit.titelbild}>
 					<Image image={d.titelbild} />
 				</div>
 			)
 		}
 
-		<div class="inhalt">
+		<div class="inhalt container">
+			{
+				eckdaten.length > 0 && (
+					<dl class="eckdaten">
+						{eckdaten.map((e) => (
+							<div>
+								<dt>{e.label}</dt>
+								<dd>{e.wert}</dd>
+							</div>
+						))}
+					</dl>
+				)
+			}
+
 			<div class="beschreibung" {...haus.edit.beschreibung}>
 				{d.beschreibung ? <PortableText value={d.beschreibung} /> : null}
 			</div>
-
-			{
-				eckdaten.length > 0 && (
-					<aside class="eckdaten">
-						<h2>Eckdaten</h2>
-						<dl>
-							{eckdaten.map((e) => (
-								<div>
-									<dt>{e.label}</dt>
-									<dd>{e.wert}</dd>
-								</div>
-							))}
-						</dl>
-					</aside>
-				)
-			}
 		</div>
 
 		{
 			galerie.length > 0 && (
-				<section class="galerie-bereich">
-					<h2>Bildergalerie</h2>
+				<section class="galerie-bereich container" aria-label="Bildergalerie">
+					<h2>Bilder</h2>
 					<div class="galerie" {...haus.edit.galerie}>
 						{galerie.map((row) => (
-							<button type="button" class="galerie-bild" aria-label="Bild vergrössern">
+							<button type="button" class="galerie-bild" aria-label="Bild gross anzeigen">
 								<Image image={row.bild} />
 							</button>
 						))}
@@ -110,34 +108,45 @@ const eckdaten = [
 
 <style>
 	.haus {
-		padding-top: var(--spacing-2xl);
 		padding-bottom: var(--spacing-5xl);
-		max-width: 1100px;
+	}
+
+	.kopf {
+		padding-top: var(--spacing-2xl);
+		padding-bottom: var(--spacing-2xl);
 	}
 
 	.zurueck {
 		display: inline-block;
-		margin-bottom: var(--spacing-xl);
+		margin-bottom: var(--spacing-2xl);
 		font-size: var(--font-size-sm);
 		color: var(--color-muted);
+		text-decoration: underline;
+		text-underline-offset: 4px;
+		text-decoration-color: var(--color-border);
 	}
 
 	.zurueck:hover {
 		color: var(--color-text);
+		text-decoration-color: var(--color-accent);
+	}
+
+	.kopf h1 {
+		font-size: clamp(2.75rem, 7vw, 5.5rem);
+		line-height: 0.98;
+		letter-spacing: -0.02em;
+		max-width: 16ch;
 	}
 
 	.ort {
-		margin-top: var(--spacing-sm);
+		margin-top: var(--spacing-md);
 		font-size: var(--font-size-lg);
-		color: var(--color-muted);
+		font-weight: 500;
+		color: var(--color-brand);
 	}
 
 	.titelbild {
-		margin-top: var(--spacing-2xl);
-		border-radius: var(--radius-lg, 16px);
-		overflow: hidden;
 		aspect-ratio: 16 / 9;
-		background: var(--color-border);
 	}
 
 	.titelbild :global(img) {
@@ -145,43 +154,29 @@ const eckdaten = [
 		height: 100%;
 		object-fit: cover;
 		max-width: none;
+		border-radius: var(--radius);
 	}
 
 	.inhalt {
-		margin-top: var(--spacing-3xl, 3rem);
+		margin-top: var(--spacing-3xl);
 		display: grid;
-		grid-template-columns: 1fr 300px;
-		gap: var(--spacing-3xl, 3rem);
+		grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+		gap: var(--spacing-3xl);
 		align-items: start;
 	}
 
-	.beschreibung {
-		font-size: var(--font-size-lg);
-		line-height: 1.7;
-	}
-
-	.beschreibung :global(p + p) {
-		margin-top: var(--spacing-md);
-	}
-
 	.eckdaten {
-		background: var(--color-surface);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-lg, 16px);
-		padding: var(--spacing-lg);
+		border-top: 1px solid var(--color-text);
+		position: sticky;
+		top: 96px;
 	}
 
-	.eckdaten h2 {
-		font-size: var(--font-size-lg);
-		margin-bottom: var(--spacing-md);
-	}
-
-	.eckdaten dl div {
+	.eckdaten div {
 		display: flex;
 		justify-content: space-between;
 		gap: var(--spacing-md);
-		padding: var(--spacing-sm) 0;
-		border-top: 1px solid var(--color-border);
+		padding: 0.8rem 0;
+		border-bottom: 1px solid var(--color-border);
 	}
 
 	.eckdaten dt {
@@ -189,8 +184,23 @@ const eckdaten = [
 	}
 
 	.eckdaten dd {
-		font-weight: 600;
 		text-align: right;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.beschreibung {
+		font-size: var(--font-size-lg);
+		line-height: 1.75;
+		max-width: 62ch;
+	}
+
+	.beschreibung :global(p + p) {
+		margin-top: var(--spacing-md);
+	}
+
+	.beschreibung :global(h2),
+	.beschreibung :global(h3) {
+		margin: var(--spacing-xl) 0 var(--spacing-sm);
 	}
 
 	.galerie-bereich {
@@ -198,13 +208,13 @@ const eckdaten = [
 	}
 
 	.galerie-bereich h2 {
-		font-size: var(--font-size-2xl);
+		font-size: var(--font-size-3xl);
 		margin-bottom: var(--spacing-lg);
 	}
 
 	.galerie {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: var(--spacing-md);
 	}
 
@@ -212,10 +222,17 @@ const eckdaten = [
 		aspect-ratio: 4 / 3;
 		padding: 0;
 		border: none;
-		border-radius: var(--radius, 10px);
+		border-radius: var(--radius);
 		overflow: hidden;
 		cursor: zoom-in;
-		background: var(--color-border);
+		background: var(--color-surface);
+	}
+
+	/* Das erste Galeriebild bekommt mehr Platz */
+	.galerie-bild:first-child {
+		grid-column: span 2;
+		grid-row: span 2;
+		aspect-ratio: auto;
 	}
 
 	.galerie-bild :global(img) {
@@ -223,11 +240,6 @@ const eckdaten = [
 		height: 100%;
 		object-fit: cover;
 		max-width: none;
-		transition: transform var(--transition-fast);
-	}
-
-	.galerie-bild:hover :global(img) {
-		transform: scale(1.04);
 	}
 
 	.lightbox {
@@ -241,14 +253,13 @@ const eckdaten = [
 	}
 
 	.lightbox::backdrop {
-		background: rgb(0 0 0 / 0.85);
+		background: rgb(25 29 30 / 0.92);
 	}
 
 	.lightbox img {
 		max-width: 95vw;
 		max-height: 90vh;
 		object-fit: contain;
-		border-radius: var(--radius, 10px);
 	}
 
 	.schliessen {
@@ -257,17 +268,26 @@ const eckdaten = [
 		right: 16px;
 		width: 44px;
 		height: 44px;
-		border: none;
+		border: 1px solid rgb(255 255 255 / 0.3);
 		border-radius: 50%;
-		background: rgb(255 255 255 / 0.15);
+		background: transparent;
 		color: white;
-		font-size: 1.25rem;
+		font-size: 1.1rem;
 		cursor: pointer;
 	}
 
-	@media (max-width: 800px) {
+	@media (max-width: 860px) {
 		.inhalt {
 			grid-template-columns: 1fr;
+			gap: var(--spacing-2xl);
+		}
+
+		.eckdaten {
+			position: static;
+		}
+
+		.galerie {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 </style>
