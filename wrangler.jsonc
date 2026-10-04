@@ -7,7 +7,8 @@
 	"d1_databases": [
 		{
 			"binding": "DB",
-			"database_name": "emdash-test-db"
+			"database_name": "emdash-test-eu",
+			"database_id": "030762ec-976d-4525-acc6-6504b5f15225"
 		}
 	],
 	"r2_buckets": [
