@@ -1,66 +1,186 @@
 ---
-import { getEmDashEntry, getSeoMeta } from "emdash";
+// Startseite: stellt alle veröffentlichten Häuser aus der Sammlung "haeuser" vor.
+import { getEmDashCollection, getSiteSettingsWithCacheHint } from "emdash";
+import { Image } from "emdash/ui";
 import Base from "../layouts/Base.astro";
-import MarketingBlocks from "../components/MarketingBlocks.astro";
 
-const { entry: page, cacheHint } = await getEmDashEntry("pages", "home");
+let haeuser: any[] = [];
+try {
+	const result = await getEmDashCollection("haeuser", {
+		status: "published",
+		orderBy: { created_at: "asc" },
+		limit: 50,
+	});
+	haeuser = result.entries ?? [];
+	if (Astro.cache?.enabled && result.cacheHint) Astro.cache.set(result.cacheHint);
+} catch {
+	// Sammlung existiert noch nicht -> leere Ansicht
+	haeuser = [];
+}
 
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+const settingsResult = await getSiteSettingsWithCacheHint();
+if (Astro.cache?.enabled) Astro.cache.set(settingsResult.cacheHint);
+const settings = settingsResult.data;
+const titel = settings?.title || "Unsere Häuser";
+const slogan = settings?.tagline || "";
 
-const pageTitle = page?.data.title;
-const pageContent = page?.data.content;
-const seo = page
-	? getSeoMeta(page, {
-			siteUrl: Astro.url.origin,
-			path: "/",
-			defaultDescription:
-				"Build products people actually want. The all-in-one platform for modern teams.",
-		})
-	: null;
+const zahl = new Intl.NumberFormat("de-CH");
 ---
 
-<Base
-	title={seo?.title !== "Home" ? seo?.title : undefined}
-	pageTitle={pageTitle}
-	description={seo?.description}
-	image={seo?.ogImage}
-	canonical={seo?.canonical}
-	robots={seo?.robots}
-	content={page ? { collection: "pages", id: page.data.id, slug: page.id } : undefined}
->
-	{
-		page && pageContent ? (
-			<div {...page.edit.content}>
-				<MarketingBlocks value={pageContent} />
-			</div>
-		) : (
-			<div class="empty-state">
-				<h1>Welcome to Acme</h1>
-				<p>Edit the home page content in the admin to get started.</p>
-					{Astro.locals.user && (
-						<a href="/_emdash/admin" class="btn btn-primary">
-							Open Admin
-						</a>
-					)}
-			</div>
-		)
-	}
+<Base title={titel}>
+	<section class="intro">
+		<div class="container">
+			<h1>{titel}</h1>
+			{slogan && <p class="slogan">{slogan}</p>}
+		</div>
+	</section>
+
+	<section class="section haus-liste">
+		<div class="container">
+			{
+				haeuser.length === 0 ? (
+					<div class="leer">
+						<h2>Noch keine Häuser</h2>
+						<p>Lege im Admin unter „Häuser“ dein erstes Haus an und veröffentliche es.</p>
+						{Astro.locals.user && (
+							<a href="/_emdash/admin" class="btn btn-primary">
+								Zum Admin
+							</a>
+						)}
+					</div>
+				) : (
+					<div class="grid">
+						{haeuser.map((haus) => (
+							<a href={`/haeuser/${haus.id}`} class="karte">
+								<div class="karte-bild">
+									{haus.data.titelbild ? (
+										<Image image={haus.data.titelbild} />
+									) : (
+										<div class="platzhalter">Kein Bild</div>
+									)}
+								</div>
+								<div class="karte-text">
+									<h2>{haus.data.title}</h2>
+									{haus.data.ort && <p class="ort">{haus.data.ort}</p>}
+									<ul class="eckdaten">
+										{haus.data.zimmer != null && <li>{haus.data.zimmer} Zimmer</li>}
+										{haus.data.wohnflaeche != null && (
+											<li>{zahl.format(haus.data.wohnflaeche)} m² Wohnfläche</li>
+										)}
+										{haus.data.grundstueck != null && (
+											<li>{zahl.format(haus.data.grundstueck)} m² Grundstück</li>
+										)}
+									</ul>
+									<span class="mehr">Details ansehen →</span>
+								</div>
+							</a>
+						))}
+					</div>
+				)
+			}
+		</div>
+	</section>
 </Base>
 
 <style>
-	.empty-state {
+	.intro {
+		padding: var(--spacing-5xl) 0 var(--spacing-2xl);
 		text-align: center;
-		padding: var(--spacing-5xl) var(--spacing-lg);
-		max-width: var(--max-width);
-		margin: 0 auto;
 	}
 
-	.empty-state h1 {
-		margin-bottom: var(--spacing-md);
-	}
-
-	.empty-state p {
+	.slogan {
+		margin-top: var(--spacing-md);
+		font-size: var(--font-size-lg);
 		color: var(--color-muted);
-		margin-bottom: var(--spacing-xl);
+	}
+
+	.haus-liste {
+		padding-top: var(--spacing-xl);
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: var(--spacing-2xl);
+	}
+
+	.karte {
+		display: flex;
+		flex-direction: column;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg, 16px);
+		overflow: hidden;
+		transition:
+			transform var(--transition-fast),
+			box-shadow var(--transition-fast);
+	}
+
+	.karte:hover {
+		transform: translateY(-3px);
+		box-shadow: var(--shadow-lg);
+	}
+
+	.karte-bild {
+		aspect-ratio: 4 / 3;
+		overflow: hidden;
+		background: var(--color-border);
+	}
+
+	.karte-bild :global(img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		max-width: none;
+	}
+
+	.platzhalter {
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--color-muted);
+	}
+
+	.karte-text {
+		padding: var(--spacing-lg);
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-sm);
+		flex: 1;
+	}
+
+	.karte-text h2 {
+		font-size: var(--font-size-xl);
+	}
+
+	.ort {
+		color: var(--color-muted);
+	}
+
+	.eckdaten {
+		list-style: none;
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--spacing-xs) var(--spacing-md);
+		font-size: var(--font-size-sm);
+		color: var(--color-muted);
+	}
+
+	.mehr {
+		margin-top: auto;
+		padding-top: var(--spacing-sm);
+		font-weight: 600;
+		color: var(--color-brand);
+	}
+
+	.leer {
+		text-align: center;
+		padding: var(--spacing-4xl) 0;
+	}
+
+	.leer p {
+		margin: var(--spacing-md) 0 var(--spacing-xl);
+		color: var(--color-muted);
 	}
 </style>

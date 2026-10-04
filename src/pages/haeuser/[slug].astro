@@ -1,0 +1,273 @@
+---
+// Detailseite für ein Haus: Titelbild, Eckdaten, Beschreibung und Bildergalerie.
+import { getEmDashEntry, getSeoMeta } from "emdash";
+import { Image, PortableText } from "emdash/ui";
+import Base from "../../layouts/Base.astro";
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/404");
+
+const { entry: haus, cacheHint } = await getEmDashEntry("haeuser", slug);
+if (!haus) return Astro.redirect("/404");
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const seo = getSeoMeta(haus, {
+	siteUrl: Astro.url.origin,
+	path: `/haeuser/${slug}`,
+});
+
+const d = haus.data as any;
+const zahl = new Intl.NumberFormat("de-CH");
+const galerie: any[] = Array.isArray(d.galerie) ? d.galerie.filter((row: any) => row?.bild) : [];
+
+const eckdaten = [
+	d.ort && { label: "Ort", wert: d.ort },
+	d.zimmer != null && { label: "Zimmer", wert: String(d.zimmer) },
+	d.wohnflaeche != null && { label: "Wohnfläche", wert: `${zahl.format(d.wohnflaeche)} m²` },
+	d.grundstueck != null && { label: "Grundstück", wert: `${zahl.format(d.grundstueck)} m²` },
+].filter(Boolean) as { label: string; wert: string }[];
+---
+
+<Base
+	title={seo.title || d.title}
+	description={seo.description}
+	image={seo.ogImage}
+	canonical={seo.canonical}
+	content={{ collection: "haeuser", id: d.id, slug: haus.id }}
+>
+	<article class="container haus">
+		<a href="/" class="zurueck">← Alle Häuser</a>
+
+		<h1 {...haus.edit.title}>{d.title}</h1>
+		{d.ort && <p class="ort" {...haus.edit.ort}>{d.ort}</p>}
+
+		{
+			d.titelbild && (
+				<div class="titelbild" {...haus.edit.titelbild}>
+					<Image image={d.titelbild} />
+				</div>
+			)
+		}
+
+		<div class="inhalt">
+			<div class="beschreibung" {...haus.edit.beschreibung}>
+				{d.beschreibung ? <PortableText value={d.beschreibung} /> : null}
+			</div>
+
+			{
+				eckdaten.length > 0 && (
+					<aside class="eckdaten">
+						<h2>Eckdaten</h2>
+						<dl>
+							{eckdaten.map((e) => (
+								<div>
+									<dt>{e.label}</dt>
+									<dd>{e.wert}</dd>
+								</div>
+							))}
+						</dl>
+					</aside>
+				)
+			}
+		</div>
+
+		{
+			galerie.length > 0 && (
+				<section class="galerie-bereich">
+					<h2>Bildergalerie</h2>
+					<div class="galerie" {...haus.edit.galerie}>
+						{galerie.map((row) => (
+							<button type="button" class="galerie-bild" aria-label="Bild vergrössern">
+								<Image image={row.bild} />
+							</button>
+						))}
+					</div>
+				</section>
+			)
+		}
+	</article>
+
+	<dialog class="lightbox" aria-label="Bildansicht">
+		<img alt="" />
+		<button type="button" class="schliessen" aria-label="Schliessen">✕</button>
+	</dialog>
+
+	<script>
+		const dialog = document.querySelector<HTMLDialogElement>(".lightbox");
+		const grossesBild = dialog?.querySelector("img");
+		document.querySelectorAll<HTMLButtonElement>(".galerie-bild").forEach((btn) => {
+			btn.addEventListener("click", () => {
+				const img = btn.querySelector("img");
+				if (!dialog || !grossesBild || !img) return;
+				grossesBild.src = img.currentSrc || img.src;
+				grossesBild.alt = img.alt;
+				dialog.showModal();
+			});
+		});
+		dialog?.addEventListener("click", () => dialog.close());
+	</script>
+</Base>
+
+<style>
+	.haus {
+		padding-top: var(--spacing-2xl);
+		padding-bottom: var(--spacing-5xl);
+		max-width: 1100px;
+	}
+
+	.zurueck {
+		display: inline-block;
+		margin-bottom: var(--spacing-xl);
+		font-size: var(--font-size-sm);
+		color: var(--color-muted);
+	}
+
+	.zurueck:hover {
+		color: var(--color-text);
+	}
+
+	.ort {
+		margin-top: var(--spacing-sm);
+		font-size: var(--font-size-lg);
+		color: var(--color-muted);
+	}
+
+	.titelbild {
+		margin-top: var(--spacing-2xl);
+		border-radius: var(--radius-lg, 16px);
+		overflow: hidden;
+		aspect-ratio: 16 / 9;
+		background: var(--color-border);
+	}
+
+	.titelbild :global(img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		max-width: none;
+	}
+
+	.inhalt {
+		margin-top: var(--spacing-3xl, 3rem);
+		display: grid;
+		grid-template-columns: 1fr 300px;
+		gap: var(--spacing-3xl, 3rem);
+		align-items: start;
+	}
+
+	.beschreibung {
+		font-size: var(--font-size-lg);
+		line-height: 1.7;
+	}
+
+	.beschreibung :global(p + p) {
+		margin-top: var(--spacing-md);
+	}
+
+	.eckdaten {
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg, 16px);
+		padding: var(--spacing-lg);
+	}
+
+	.eckdaten h2 {
+		font-size: var(--font-size-lg);
+		margin-bottom: var(--spacing-md);
+	}
+
+	.eckdaten dl div {
+		display: flex;
+		justify-content: space-between;
+		gap: var(--spacing-md);
+		padding: var(--spacing-sm) 0;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.eckdaten dt {
+		color: var(--color-muted);
+	}
+
+	.eckdaten dd {
+		font-weight: 600;
+		text-align: right;
+	}
+
+	.galerie-bereich {
+		margin-top: var(--spacing-4xl);
+	}
+
+	.galerie-bereich h2 {
+		font-size: var(--font-size-2xl);
+		margin-bottom: var(--spacing-lg);
+	}
+
+	.galerie {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+		gap: var(--spacing-md);
+	}
+
+	.galerie-bild {
+		aspect-ratio: 4 / 3;
+		padding: 0;
+		border: none;
+		border-radius: var(--radius, 10px);
+		overflow: hidden;
+		cursor: zoom-in;
+		background: var(--color-border);
+	}
+
+	.galerie-bild :global(img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		max-width: none;
+		transition: transform var(--transition-fast);
+	}
+
+	.galerie-bild:hover :global(img) {
+		transform: scale(1.04);
+	}
+
+	.lightbox {
+		margin: auto;
+		padding: 0;
+		border: none;
+		background: transparent;
+		max-width: 95vw;
+		max-height: 95vh;
+		cursor: zoom-out;
+	}
+
+	.lightbox::backdrop {
+		background: rgb(0 0 0 / 0.85);
+	}
+
+	.lightbox img {
+		max-width: 95vw;
+		max-height: 90vh;
+		object-fit: contain;
+		border-radius: var(--radius, 10px);
+	}
+
+	.schliessen {
+		position: fixed;
+		top: 16px;
+		right: 16px;
+		width: 44px;
+		height: 44px;
+		border: none;
+		border-radius: 50%;
+		background: rgb(255 255 255 / 0.15);
+		color: white;
+		font-size: 1.25rem;
+		cursor: pointer;
+	}
+
+	@media (max-width: 800px) {
+		.inhalt {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
