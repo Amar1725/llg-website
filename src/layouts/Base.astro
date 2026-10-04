@@ -152,6 +152,14 @@ const isLoggedIn = !!Astro.locals.user;
 						{settings?.tagline || ""}
 					</p>
 				</div>
+				<address class="footer-kontakt">
+					<h4>Kontakt</h4>
+					<p>Rubi Immobilien<br />Seestrasse 12<br />2513 Twann</p>
+					<p>
+						<a href="tel:+41325550123">032 555 01 23</a><br />
+						<a href="mailto:info@rubi.example">info@rubi.example</a>
+					</p>
+				</address>
 				<div class="footer-links">
 					{
 						footerColumns.map((col) => (
@@ -537,7 +545,7 @@ const isLoggedIn = !!Astro.locals.user;
 				margin: 0 auto;
 				padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-2xl);
 				display: grid;
-				grid-template-columns: 1fr 2fr;
+				grid-template-columns: 1fr 1fr 2fr;
 				gap: var(--spacing-4xl);
 			}
 
@@ -551,6 +559,26 @@ const isLoggedIn = !!Astro.locals.user;
 			.footer-logo-img {
 				height: 24px;
 				width: auto;
+			}
+
+			.footer-kontakt {
+				font-style: normal;
+				font-size: var(--font-size-sm);
+				line-height: 1.7;
+			}
+
+			.footer-kontakt h4 {
+				font-size: var(--font-size-sm);
+				font-weight: 600;
+				margin-bottom: var(--spacing-md);
+			}
+
+			.footer-kontakt p + p {
+				margin-top: var(--spacing-sm);
+			}
+
+			.footer-kontakt a:hover {
+				color: var(--color-brand);
 			}
 
 			.footer-tagline {
