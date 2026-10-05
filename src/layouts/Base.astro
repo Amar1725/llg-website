@@ -134,6 +134,7 @@ const isLoggedIn = !!Astro.locals.user;
 				</div>
 				<div class="nav-actions">
 					{isLoggedIn && <a href="/_emdash/admin" class="nav-admin">Admin</a>}
+					<a href="/kontakt" class="btn btn-dunkel nav-cta">Kontakt</a>
 				</div>
 			</nav>
 		</header>
@@ -543,8 +544,8 @@ const isLoggedIn = !!Astro.locals.user;
 
 			/* Compact variant of .btn.btn-primary for the header */
 			.nav-cta {
-				padding: var(--spacing-sm) var(--spacing-md);
-				border-radius: var(--radius-sm);
+				padding: 0.7rem 1.4rem;
+				border-radius: 0;
 			}
 
 			main {
