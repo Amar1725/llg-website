@@ -35,7 +35,16 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 	<section class:list={["hero", { "ohne-bild": !heroBild }]}>
 		{heroBild && (
 			<div class="hero-bild">
-				<Image image={heroBild} />
+				{/* Sofort laden (nicht lazy), da es das erste sichtbare Bild ist */}
+				<img
+					src={teilenBild}
+					alt={heroBild.alt || ""}
+					width={heroBild.width}
+					height={heroBild.height}
+					loading="eager"
+					fetchpriority="high"
+					decoding="async"
+				/>
 			</div>
 		)}
 		<div class="hero-inhalt container">

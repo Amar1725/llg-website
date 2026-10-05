@@ -51,7 +51,15 @@ const eckdaten = [
 			{
 				d.titelbild && (
 					<div class="kopf-bild" {...haus.edit.titelbild}>
-						<Image image={d.titelbild} />
+						<img
+							src={teilenBild}
+							alt={d.titelbild.alt || d.title}
+							width={d.titelbild.width}
+							height={d.titelbild.height}
+							loading="eager"
+							fetchpriority="high"
+							decoding="async"
+						/>
 					</div>
 				)
 			}
