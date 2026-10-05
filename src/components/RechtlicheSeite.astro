@@ -1,0 +1,78 @@
+---
+// Rendert eine Rechtsseite (Impressum, Datenschutz) aus einem Widget-Bereich.
+// Der Text wird im Admin unter "Widgets" bearbeitet.
+import { getWidgetArea } from "emdash";
+import { PortableText } from "emdash/ui";
+import Base from "../layouts/Base.astro";
+
+interface Props {
+	bereich: string;
+	titel: string;
+}
+
+const { bereich, titel } = Astro.props;
+
+let widgets: any[] = [];
+try {
+	const area = await getWidgetArea(bereich);
+	widgets = area?.widgets ?? [];
+} catch {
+	widgets = [];
+}
+const ueberschrift = widgets[0]?.title || titel;
+---
+
+<Base title={titel} robots="noindex">
+	<article class="recht container">
+		<h1>{ueberschrift}</h1>
+		{
+			widgets.length === 0 ? (
+				<p class="hinweis">Für diese Seite ist noch kein Text hinterlegt. Er wird im Admin unter „Widgets“ im Bereich „{titel}“ eingetragen.</p>
+			) : (
+				widgets.map((w) => (
+					<div class="text">
+						{w.type === "content" && w.content && <PortableText value={w.content} />}
+					</div>
+				))
+			)
+		}
+	</article>
+</Base>
+
+<style>
+	.recht {
+		padding-top: var(--spacing-4xl);
+		padding-bottom: var(--spacing-5xl);
+		max-width: 760px;
+	}
+
+	.recht h1 {
+		font-size: clamp(2.25rem, 5vw, 3.5rem);
+		font-weight: 300;
+		margin-bottom: var(--spacing-2xl);
+	}
+
+	.text :global(h2) {
+		font-size: var(--font-size-xl);
+		font-weight: 500;
+		margin: var(--spacing-2xl) 0 var(--spacing-sm);
+	}
+
+	.text :global(p) {
+		white-space: pre-line;
+		color: var(--color-text);
+	}
+
+	.text :global(p + p) {
+		margin-top: var(--spacing-md);
+	}
+
+	.text :global(a) {
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.hinweis {
+		color: var(--color-muted);
+	}
+</style>
