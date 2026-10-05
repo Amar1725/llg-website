@@ -1,0 +1,433 @@
+---
+// Detailseite für ein Modell (Containerhaus): Titelbild über die ganze Breite,
+// danach Beschreibung, Eckdaten, Ausstattung, Galerie und Anfrageformular.
+import { getEmDashEntry, getSeoMeta } from "emdash";
+import { Image, PortableText } from "emdash/ui";
+import { Form } from "@emdash-cms/plugin-forms/ui";
+import "@emdash-cms/plugin-forms/styles";
+import Base from "../../layouts/Base.astro";
+import { bildUrl, kurzText } from "../../lib/teilen";
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/404");
+
+const { entry: haus, cacheHint } = await getEmDashEntry("hauser", slug);
+if (!haus) return Astro.redirect("/404");
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const seo = getSeoMeta(haus, {
+	siteUrl: Astro.url.origin,
+	path: `/modelle/${slug}`,
+});
+
+const d = haus.data as any;
+const zahl = new Intl.NumberFormat("de-DE");
+const eckdatenKurz = [
+	d.wohnflaeche != null && `${zahl.format(d.wohnflaeche)} m² Wohnfläche`,
+	d.module != null && `${d.module} Container`,
+	d.zimmer != null && `${zahl.format(d.zimmer)} Zimmer`,
+].filter(Boolean).join(", ");
+const teilenText = [eckdatenKurz, kurzText(d.beschreibung, 150)].filter(Boolean).join(". ");
+const teilenBild = bildUrl(d.titelbild, Astro.url.origin);
+const galerie: any[] = Array.isArray(d.galerie) ? d.galerie.filter((row: any) => row?.bild) : [];
+
+const eckdaten = [
+	d.wohnflaeche != null && { label: "Wohnfläche", wert: `${zahl.format(d.wohnflaeche)} m²` },
+	d.masse && { label: "Maße (L × B × H)", wert: d.masse },
+	d.module != null && { label: "Container", wert: String(d.module) },
+	d.zimmer != null && { label: "Zimmer", wert: zahl.format(d.zimmer) },
+	d.baeder != null && { label: "Bäder", wert: String(d.baeder) },
+	d.lieferzeit && { label: "Lieferzeit", wert: d.lieferzeit },
+].filter(Boolean) as { label: string; wert: string }[];
+
+// Ausstattung: eine Zeile im Admin = ein Punkt in der Liste
+const ausstattung: string[] = typeof d.ausstattung === "string"
+	? d.ausstattung.split("\n").map((z: string) => z.trim()).filter(Boolean)
+	: [];
+---
+
+<Base
+	title={seo.title || d.title}
+	description={seo.description || teilenText}
+	image={seo.ogImage || teilenBild}
+	canonical={seo.canonical}
+	content={{ collection: "hauser", id: d.id, slug: haus.id }}
+>
+	<article>
+		<header class:list={["kopf", { "ohne-bild": !d.titelbild }]}>
+			{
+				d.titelbild && (
+					<div class="kopf-bild" {...haus.edit.titelbild}>
+						<img
+							src={teilenBild}
+							alt={d.titelbild.alt || d.title}
+							width={d.titelbild.width}
+							height={d.titelbild.height}
+							loading="eager"
+							fetchpriority="high"
+							decoding="async"
+						/>
+					</div>
+				)
+			}
+			<div class="kopf-text container">
+				<p class="ort">Containerhaus</p>
+				<h1 {...haus.edit.title}>{d.title}</h1>
+			</div>
+		</header>
+
+		<div class="inhalt container">
+			<div class="beschreibung" {...haus.edit.beschreibung}>
+				<a href="/#modelle" class="zurueck">Alle Modelle</a>
+				{d.beschreibung ? <PortableText value={d.beschreibung} /> : null}
+				{ausstattung.length > 0 && (
+					<div class="ausstattung" {...haus.edit.ausstattung}>
+						<h2>Ausstattung</h2>
+						<ul>
+							{ausstattung.map((punkt) => <li>{punkt}</li>)}
+						</ul>
+					</div>
+				)}
+			</div>
+
+			<aside class="seite">
+				{
+					eckdaten.length > 0 && (
+						<dl class="eckdaten">
+							{eckdaten.map((e) => (
+								<div>
+									<dt>{e.label}</dt>
+									<dd>{e.wert}</dd>
+								</div>
+							))}
+						</dl>
+					)
+				}
+				<a href="#anfrage" class="btn btn-dunkel anfrage">Angebot anfragen</a>
+			</aside>
+		</div>
+
+		{
+			galerie.length > 0 && (
+				<section class="galerie-bereich container" aria-label="Bildergalerie">
+					<h2>Galerie</h2>
+					<div class="galerie" {...haus.edit.galerie}>
+						{galerie.map((row) => (
+							<button type="button" class="galerie-bild" aria-label="Bild groß anzeigen">
+								<Image image={row.bild} />
+							</button>
+						))}
+					</div>
+				</section>
+			)
+		}
+
+		<section class="anfrage-bereich container" id="anfrage" data-haus={d.title}>
+			<div class="anfrage-text">
+				<h2>Angebot anfragen</h2>
+				<p>Erzählen Sie uns kurz, wofür Sie das Haus nutzen möchten und wohin es geliefert werden soll. Wir melden uns so schnell wie möglich mit einem Angebot.</p>
+			</div>
+			<div class="anfrage-formular">
+				<Form id="kontakt" />
+			</div>
+		</section>
+	</article>
+
+	<dialog class="lightbox" aria-label="Bildansicht">
+		<img alt="" />
+		<button type="button" class="schliessen" aria-label="Schließen">✕</button>
+	</dialog>
+
+	<script>
+		const dialog = document.querySelector<HTMLDialogElement>(".lightbox");
+		const grossesBild = dialog?.querySelector("img");
+		document.querySelectorAll<HTMLButtonElement>(".galerie-bild").forEach((btn) => {
+			btn.addEventListener("click", () => {
+				const img = btn.querySelector("img");
+				if (!dialog || !grossesBild || !img) return;
+				grossesBild.src = img.currentSrc || img.src;
+				grossesBild.alt = img.alt;
+				dialog.showModal();
+			});
+		});
+		dialog?.addEventListener("click", () => dialog.close());
+
+		// Modellname automatisch ins Feld "haus" (Modell) des Formulars schreiben
+		const bereich = document.querySelector<HTMLElement>("#anfrage");
+		const hausFeld = bereich?.querySelector<HTMLInputElement>('[name="haus"]');
+		if (bereich && hausFeld && !hausFeld.value) hausFeld.value = bereich.dataset.haus ?? "";
+	</script>
+</Base>
+
+<style>
+	.kopf {
+		position: relative;
+		min-height: 78vh;
+		display: flex;
+		align-items: flex-end;
+		color: #ffffff;
+		background: #1c1d1e;
+		overflow: hidden;
+	}
+
+	.kopf.ohne-bild {
+		min-height: 40vh;
+		color: var(--color-text);
+		background: var(--color-surface);
+	}
+
+	.kopf-bild {
+		position: absolute;
+		inset: 0;
+	}
+
+	.kopf-bild :global(img) {
+		width: 100%;
+		height: 100%;
+		max-width: none;
+		object-fit: cover;
+	}
+
+	.kopf-bild::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(to top, rgb(0 0 0 / 0.6), rgb(0 0 0 / 0.05) 55%);
+		pointer-events: none;
+	}
+
+	.kopf-text {
+		position: relative;
+		width: 100%;
+		padding-bottom: var(--spacing-3xl);
+	}
+
+	.ort {
+		font-size: var(--font-size-lg);
+		opacity: 0.9;
+	}
+
+	.kopf h1 {
+		margin-top: var(--spacing-xs);
+		font-size: clamp(2.5rem, 6vw, 4.75rem);
+		font-weight: 300;
+		line-height: 1.05;
+	}
+
+	.inhalt {
+		padding-top: var(--spacing-4xl);
+		display: grid;
+		grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+		gap: var(--spacing-4xl);
+		align-items: start;
+	}
+
+	.zurueck {
+		display: inline-block;
+		margin-bottom: var(--spacing-xl);
+		font-size: var(--font-size-sm);
+		color: var(--color-muted);
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+
+	.zurueck:hover {
+		color: var(--color-text);
+	}
+
+	.beschreibung {
+		font-size: var(--font-size-lg);
+		font-weight: 300;
+		line-height: 1.8;
+		max-width: 64ch;
+	}
+
+	.beschreibung :global(p + p) {
+		margin-top: var(--spacing-md);
+	}
+
+	.ausstattung {
+		margin-top: var(--spacing-2xl);
+	}
+
+	.ausstattung h2 {
+		font-size: var(--font-size-xl);
+		font-weight: 400;
+		margin-bottom: var(--spacing-md);
+	}
+
+	.ausstattung ul {
+		list-style: none;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.ausstattung li {
+		padding: 0.6rem 0 0.6rem 1.5rem;
+		border-bottom: 1px solid var(--color-border);
+		position: relative;
+		font-size: var(--font-size-base);
+	}
+
+	.ausstattung li::before {
+		content: "";
+		position: absolute;
+		left: 0.2rem;
+		top: 1.15rem;
+		width: 0.55rem;
+		height: 1px;
+		background: var(--color-text);
+	}
+
+	.seite {
+		position: sticky;
+		top: 100px;
+		background: var(--color-surface);
+		padding: var(--spacing-xl);
+	}
+
+	.eckdaten div {
+		display: flex;
+		justify-content: space-between;
+		gap: var(--spacing-md);
+		padding: 0.85rem 0;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.eckdaten div:first-child {
+		padding-top: 0;
+	}
+
+	.eckdaten dt {
+		color: var(--color-muted);
+	}
+
+	.eckdaten dd {
+		text-align: right;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.anfrage {
+		display: flex;
+		width: 100%;
+		margin-top: var(--spacing-xl);
+	}
+
+	.galerie-bereich {
+		padding-top: var(--spacing-4xl);
+		padding-bottom: var(--spacing-4xl);
+	}
+
+	.galerie-bereich h2 {
+		font-size: clamp(1.75rem, 3vw, 2.5rem);
+		font-weight: 300;
+		padding-bottom: var(--spacing-lg);
+		margin-bottom: var(--spacing-2xl);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.galerie {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: var(--spacing-md);
+	}
+
+	.galerie-bild {
+		aspect-ratio: 3 / 2;
+		padding: 0;
+		border: none;
+		overflow: hidden;
+		cursor: zoom-in;
+		background: var(--color-surface);
+	}
+
+	.galerie-bild :global(img) {
+		width: 100%;
+		height: 100%;
+		max-width: none;
+		object-fit: cover;
+		transition: transform 700ms ease;
+	}
+
+	.galerie-bild:hover :global(img) {
+		transform: scale(1.04);
+	}
+
+	.lightbox {
+		margin: auto;
+		padding: 0;
+		border: none;
+		background: transparent;
+		max-width: 95vw;
+		max-height: 95vh;
+		cursor: zoom-out;
+	}
+
+	.lightbox::backdrop {
+		background: rgb(10 10 10 / 0.92);
+	}
+
+	.lightbox img {
+		max-width: 95vw;
+		max-height: 90vh;
+		object-fit: contain;
+	}
+
+	.schliessen {
+		position: fixed;
+		top: 16px;
+		right: 16px;
+		width: 44px;
+		height: 44px;
+		border: 1px solid rgb(255 255 255 / 0.4);
+		background: transparent;
+		color: white;
+		font-size: 1.1rem;
+		cursor: pointer;
+	}
+
+	.anfrage-bereich {
+		padding-top: var(--spacing-4xl);
+		padding-bottom: var(--spacing-5xl);
+		border-top: 1px solid var(--color-border);
+		display: grid;
+		grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+		gap: var(--spacing-4xl);
+	}
+
+	.anfrage-text h2 {
+		font-size: clamp(1.75rem, 3vw, 2.5rem);
+		font-weight: 300;
+	}
+
+	.anfrage-text p {
+		margin-top: var(--spacing-md);
+		color: var(--color-muted);
+		max-width: 36ch;
+	}
+
+	@media (max-width: 860px) {
+		.anfrage-bereich {
+			grid-template-columns: 1fr;
+			gap: var(--spacing-xl);
+		}
+
+		.kopf {
+			min-height: 60vh;
+		}
+
+		.inhalt {
+			grid-template-columns: 1fr;
+			gap: var(--spacing-2xl);
+		}
+
+		.seite {
+			position: static;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.galerie-bild :global(img) {
+			transition: none;
+		}
+	}
+</style>

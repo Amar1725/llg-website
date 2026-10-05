@@ -41,7 +41,7 @@ if (Astro.cache?.enabled) {
 }
 
 const settings = settingsResult.data;
-const siteTitle = settings?.title || "Unsere Häuser";
+const siteTitle = settings?.title || "Containerhäuser";
 const fullTitle = title ? (title.includes(siteTitle) ? title : `${title} — ${siteTitle}`) : siteTitle;
 const siteDescription =
 	settings?.tagline || "";
@@ -84,7 +84,7 @@ const isLoggedIn = !!Astro.locals.user;
 ---
 
 <!doctype html>
-<html lang="de-CH">
+<html lang="de">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />

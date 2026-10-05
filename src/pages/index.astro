@@ -1,8 +1,9 @@
 ---
-// Startseite: grosses Titelbild (erstes Haus) mit Slogan, darunter alle
-// veröffentlichten Häuser aus der Sammlung "hauser" als Bildkacheln.
-import { getEmDashCollection, getSiteSettingsWithCacheHint } from "emdash";
-import { Image } from "emdash/ui";
+// Startseite: großes Titelbild (erstes Modell) mit Slogan, darunter alle
+// veröffentlichten Modelle (Sammlung "hauser") als Bildkacheln, danach
+// "So funktioniert es" und "Häufige Fragen" aus den Widget-Bereichen.
+import { getEmDashCollection, getSiteSettingsWithCacheHint, getWidgetArea } from "emdash";
+import { Image, PortableText } from "emdash/ui";
 import Base from "../layouts/Base.astro";
 import { bildUrl } from "../lib/teilen";
 
@@ -22,10 +23,22 @@ try {
 const settingsResult = await getSiteSettingsWithCacheHint();
 if (Astro.cache?.enabled) Astro.cache.set(settingsResult.cacheHint);
 const settings = settingsResult.data;
-const titel = settings?.title || "Unsere Häuser";
-const slogan = settings?.tagline || "Wohnen zwischen See und Bergen";
+const titel = settings?.title || "Containerhäuser";
+const slogan = settings?.tagline || "Containerhäuser, fertig geplant und geliefert";
 
-const zahl = new Intl.NumberFormat("de-CH");
+const zahl = new Intl.NumberFormat("de-DE");
+
+// Bearbeitbar im Admin unter "Widgets": Bereiche "ablauf" und "faq"
+async function widgets(name: string) {
+	try {
+		const area = await getWidgetArea(name);
+		return (area?.widgets ?? []).filter((w: any) => w.type === "content");
+	} catch {
+		return [];
+	}
+}
+const ablauf = await widgets("ablauf");
+const fragen = await widgets("faq");
 const anzahl = haeuser.length;
 const heroBild = haeuser.find((h) => h.data.titelbild)?.data.titelbild;
 const teilenBild = bildUrl(heroBild, Astro.url.origin);
@@ -50,8 +63,8 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 		<div class="hero-inhalt container">
 			<h1>{slogan}</h1>
 			{anzahl > 0 && (
-				<a href="#haeuser" class:list={["btn", heroBild ? "btn-hell" : "btn-dunkel"]}>
-					Häuser ansehen
+				<a href="#modelle" class:list={["btn", heroBild ? "btn-hell" : "btn-dunkel"]}>
+					Modelle ansehen
 				</a>
 			)}
 		</div>
@@ -60,8 +73,8 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 	{
 		anzahl === 0 ? (
 			<section class="leer container">
-				<h2>Noch keine Häuser veröffentlicht</h2>
-				<p>Lege im Admin unter „Häuser“ ein Haus an und veröffentliche es. Es erscheint dann hier.</p>
+				<h2>Noch keine Modelle veröffentlicht</h2>
+				<p>Lege im Admin unter „Modelle“ ein Modell an und veröffentliche es. Es erscheint dann hier.</p>
 				{Astro.locals.user && (
 					<a href="/_emdash/admin" class="btn btn-dunkel">
 						Admin öffnen
@@ -69,14 +82,14 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 				)}
 			</section>
 		) : (
-			<section class="haeuser container" id="haeuser">
+			<section class="haeuser container" id="modelle">
 				<header class="haeuser-kopf">
-					<h2>Unsere Häuser</h2>
-					<p>{anzahl === 1 ? "Ein Haus" : `${anzahl} Häuser`} im Angebot</p>
+					<h2>Unsere Modelle</h2>
+					<p>{anzahl === 1 ? "Ein Modell" : `${anzahl} Modelle`}, Grundriss und Ausstattung anpassbar</p>
 				</header>
 				<div class="raster">
 					{haeuser.map((haus) => (
-						<a href={`/haeuser/${haus.id}`} class="kachel">
+						<a href={`/modelle/${haus.id}`} class="kachel">
 							<div class="kachel-bild">
 								{haus.data.titelbild ? (
 									<Image image={haus.data.titelbild} />
@@ -88,9 +101,9 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 								<h3>{haus.data.title}</h3>
 								<p>
 									{[
-										haus.data.ort,
-										haus.data.zimmer != null && `${haus.data.zimmer} Zimmer`,
 										haus.data.wohnflaeche != null && `${zahl.format(haus.data.wohnflaeche)} m²`,
+										haus.data.module != null && `${haus.data.module} Container`,
+										haus.data.zimmer != null && `${zahl.format(haus.data.zimmer)} Zimmer`,
 									]
 										.filter(Boolean)
 										.join("  |  ")}
@@ -99,6 +112,43 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 						</a>
 					))}
 				</div>
+			</section>
+		)
+	}
+
+	{
+		ablauf.length > 0 && (
+			<section class="ablauf-bereich" aria-labelledby="ablauf-titel">
+				<div class="container">
+					<h2 id="ablauf-titel" class="bereich-titel">So funktioniert es</h2>
+					<ol class="ablauf">
+						{ablauf.map((schritt: any) => (
+							<li>
+								<h3>{schritt.title}</h3>
+								{schritt.content && <PortableText value={schritt.content} />}
+							</li>
+						))}
+					</ol>
+				</div>
+			</section>
+		)
+	}
+
+	{
+		fragen.length > 0 && (
+			<section class="faq-bereich container" aria-labelledby="faq-titel">
+				<h2 id="faq-titel" class="bereich-titel">Häufige Fragen</h2>
+				<div class="faq">
+					{fragen.map((frage: any) => (
+						<details>
+							<summary>{frage.title}</summary>
+							<div class="antwort">{frage.content && <PortableText value={frage.content} />}</div>
+						</details>
+					))}
+				</div>
+				<p class="faq-weiter">
+					Ihre Frage ist nicht dabei? <a href="/kontakt">Schreiben Sie uns.</a>
+				</p>
 			</section>
 		)
 	}
@@ -133,7 +183,7 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 		object-fit: cover;
 	}
 
-	/* Abdunkeln nach unten, damit der weisse Titel lesbar bleibt */
+	/* Abdunkeln nach unten, damit der weiße Titel lesbar bleibt */
 	.hero-bild::after {
 		content: "";
 		position: absolute;
@@ -265,6 +315,109 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 	.leer p {
 		margin: var(--spacing-md) 0 var(--spacing-xl);
 		color: var(--color-muted);
+	}
+
+	.bereich-titel {
+		font-size: clamp(1.75rem, 3vw, 2.5rem);
+		font-weight: 300;
+		padding-bottom: var(--spacing-lg);
+		margin-bottom: var(--spacing-2xl);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.ablauf-bereich {
+		background: var(--color-surface);
+		padding: var(--spacing-4xl) 0;
+	}
+
+	.ablauf {
+		list-style: none;
+		counter-reset: schritt;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		gap: var(--spacing-2xl);
+	}
+
+	.ablauf li {
+		counter-increment: schritt;
+	}
+
+	/* Die Nummer zeigt die Reihenfolge der Schritte */
+	.ablauf li::before {
+		content: counter(schritt);
+		display: block;
+		font-size: 2.75rem;
+		font-weight: 300;
+		line-height: 1;
+		margin-bottom: var(--spacing-md);
+		color: var(--color-muted);
+	}
+
+	.ablauf h3 {
+		font-size: var(--font-size-lg);
+		font-weight: 500;
+		margin-bottom: var(--spacing-sm);
+	}
+
+	.ablauf :global(p) {
+		color: var(--color-muted);
+		line-height: 1.7;
+	}
+
+	.faq-bereich {
+		padding-top: var(--spacing-4xl);
+		padding-bottom: var(--spacing-5xl);
+		max-width: 900px;
+		margin-left: 0;
+	}
+
+	.faq details {
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.faq summary {
+		cursor: pointer;
+		list-style: none;
+		padding: var(--spacing-lg) 2.5rem var(--spacing-lg) 0;
+		font-size: var(--font-size-lg);
+		position: relative;
+	}
+
+	.faq summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.faq summary::after {
+		content: "+";
+		position: absolute;
+		right: 0.25rem;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: 1.5rem;
+		font-weight: 300;
+		color: var(--color-muted);
+	}
+
+	.faq details[open] summary::after {
+		content: "–";
+	}
+
+	.antwort {
+		padding-bottom: var(--spacing-lg);
+		color: var(--color-muted);
+		line-height: 1.7;
+		max-width: 64ch;
+	}
+
+	.faq-weiter {
+		margin-top: var(--spacing-xl);
+		color: var(--color-muted);
+	}
+
+	.faq-weiter a {
+		color: var(--color-text);
+		text-decoration: underline;
+		text-underline-offset: 3px;
 	}
 
 	@media (max-width: 640px) {
