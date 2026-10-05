@@ -6,6 +6,7 @@ import { Image, PortableText } from "emdash/ui";
 import { Form } from "@emdash-cms/plugin-forms/ui";
 import "@emdash-cms/plugin-forms/styles";
 import Base from "../../layouts/Base.astro";
+import { bildUrl, kurzText } from "../../lib/teilen";
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect("/404");
@@ -21,6 +22,13 @@ const seo = getSeoMeta(haus, {
 
 const d = haus.data as any;
 const zahl = new Intl.NumberFormat("de-CH");
+const eckdatenKurz = [
+	d.ort,
+	d.zimmer != null && `${d.zimmer} Zimmer`,
+	d.wohnflaeche != null && `${zahl.format(d.wohnflaeche)} m² Wohnfläche`,
+].filter(Boolean).join(", ");
+const teilenText = [eckdatenKurz, kurzText(d.beschreibung, 150)].filter(Boolean).join(". ");
+const teilenBild = bildUrl(d.titelbild, Astro.url.origin);
 const galerie: any[] = Array.isArray(d.galerie) ? d.galerie.filter((row: any) => row?.bild) : [];
 
 const eckdaten = [
@@ -33,8 +41,8 @@ const eckdaten = [
 
 <Base
 	title={seo.title || d.title}
-	description={seo.description}
-	image={seo.ogImage}
+	description={seo.description || teilenText}
+	image={seo.ogImage || teilenBild}
 	canonical={seo.canonical}
 	content={{ collection: "hauser", id: d.id, slug: haus.id }}
 >

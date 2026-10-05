@@ -17,7 +17,8 @@ interface Props {
 	content?: { collection: string; id: string; slug?: string | null };
 }
 
-const { title, pageTitle, description, image, canonical, robots, content } = Astro.props;
+const { title, pageTitle, description, canonical, robots, content } = Astro.props;
+const image = Astro.props.image || new URL("/og-standard.png", Astro.url.origin).toString();
 const [settingsResult, menuResult, footerProductResult, footerCompanyResult, footerSupportResult] =
 	await Promise.all([
 		getSiteSettingsWithCacheHint(),
@@ -89,6 +90,11 @@ const isLoggedIn = !!Astro.locals.user;
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>{fullTitle}</title>
 		<EmDashHead page={pageCtx} />
+		<link rel="icon" href="/favicon.ico" sizes="48x48" />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+		<meta name="theme-color" content="#1c1d1e" />
 		<Font cssVariable="--font-body" preload />
 		<script is:inline>
 			// Apply an explicit theme choice immediately to prevent flash.

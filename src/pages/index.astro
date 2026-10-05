@@ -4,6 +4,7 @@
 import { getEmDashCollection, getSiteSettingsWithCacheHint } from "emdash";
 import { Image } from "emdash/ui";
 import Base from "../layouts/Base.astro";
+import { bildUrl } from "../lib/teilen";
 
 let haeuser: any[] = [];
 try {
@@ -27,9 +28,10 @@ const slogan = settings?.tagline || "Wohnen zwischen See und Bergen";
 const zahl = new Intl.NumberFormat("de-CH");
 const anzahl = haeuser.length;
 const heroBild = haeuser.find((h) => h.data.titelbild)?.data.titelbild;
+const teilenBild = bildUrl(heroBild, Astro.url.origin);
 ---
 
-<Base title={titel}>
+<Base title={titel} description={slogan} image={teilenBild}>
 	<section class:list={["hero", { "ohne-bild": !heroBild }]}>
 		{heroBild && (
 			<div class="hero-bild">
