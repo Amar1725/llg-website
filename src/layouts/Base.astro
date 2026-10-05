@@ -122,7 +122,13 @@ const isLoggedIn = !!Astro.locals.user;
 							height={siteLogo.height}
 							class="site-logo-img"
 						/>
-						: siteTitle
+						: <>
+							<svg class="logo-zeichen" viewBox="0 0 64 64" aria-hidden="true">
+								<polyline points="13,30 32,14 51,30" />
+								<polyline points="22,33 22,50 42,50" />
+							</svg>
+							<span class="logo-text">{siteTitle}</span>
+						</>
 					}
 				</a>
 				<div class="nav-links">
@@ -509,6 +515,20 @@ const isLoggedIn = !!Astro.locals.user;
 				letter-spacing: 0.32em;
 				text-transform: uppercase;
 				color: var(--color-text);
+				display: inline-flex;
+				align-items: center;
+				gap: 0.85rem;
+			}
+
+			/* Haus-Zeichen neben dem Namen: nur Linien, Farbe folgt dem Text (hell/dunkel) */
+			.logo-zeichen {
+				width: 26px;
+				height: 26px;
+				flex-shrink: 0;
+				fill: none;
+				stroke: currentColor;
+				stroke-width: 4.5;
+				stroke-linecap: square;
 			}
 
 			.site-logo-img {
@@ -720,6 +740,21 @@ const isLoggedIn = !!Astro.locals.user;
 			}
 
 			@media (max-width: 540px) {
+				/* Auf schmalen Handys nur das Zeichen, damit der Kontakt-Button Platz hat */
+				.logo-text {
+					position: absolute;
+					width: 1px;
+					height: 1px;
+					overflow: hidden;
+					clip: rect(0 0 0 0);
+					white-space: nowrap;
+				}
+
+				.logo-zeichen {
+					width: 30px;
+					height: 30px;
+				}
+
 				.nav {
 					flex-wrap: wrap;
 					row-gap: var(--spacing-md);
