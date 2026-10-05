@@ -133,3 +133,54 @@
 	outline: 2px solid var(--color-text);
 	outline-offset: 3px;
 }
+
+/* Kontaktformular (Forms-Plugin) im Stil der Seite */
+.ec-form {
+	--ec-form-gap: 1.25rem;
+	--ec-form-field-border: 1px solid var(--color-border);
+	--ec-form-field-radius: 0;
+	--ec-form-field-padding: 0.85rem 1rem;
+	--ec-form-field-bg: var(--color-bg);
+	--ec-form-error-color: var(--color-danger);
+	--ec-form-required-color: var(--color-muted);
+	--ec-form-help-color: var(--color-muted);
+	--ec-form-submit-bg: var(--color-brand);
+	--ec-form-submit-color: var(--color-on-brand);
+	--ec-form-submit-radius: 0;
+	--ec-form-submit-padding: 1rem 2rem;
+	font-family: var(--font-body);
+	color: var(--color-text);
+}
+
+.ec-form .ec-form-input,
+.ec-form textarea,
+.ec-form select {
+	font: inherit;
+	color: var(--color-text);
+}
+
+.ec-form .ec-form-input:focus,
+.ec-form textarea:focus,
+.ec-form select:focus {
+	outline: none;
+	border-color: var(--color-text);
+}
+
+.ec-form .ec-form-label {
+	font-size: var(--font-size-sm);
+	color: var(--color-muted);
+}
+
+.ec-form .ec-form-submit {
+	text-transform: uppercase;
+	letter-spacing: 0.18em;
+	font-size: 0.78rem;
+	font-weight: 500;
+	border: 1px solid var(--color-brand);
+	cursor: pointer;
+}
+
+.ec-form .ec-form-submit:hover {
+	background: transparent;
+	color: var(--color-brand);
+}

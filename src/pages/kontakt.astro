@@ -1,0 +1,81 @@
+---
+// Kontaktseite mit dem Formular "kontakt" aus dem Forms-Plugin.
+// Die Kontaktdaten links kommen aus dem Footer-Widget "Kontakt".
+import { getWidgetArea } from "emdash";
+import { PortableText } from "emdash/ui";
+import { Form } from "@emdash-cms/plugin-forms/ui";
+import "@emdash-cms/plugin-forms/styles";
+import Base from "../layouts/Base.astro";
+
+let kontakt: any = null;
+try {
+	const area = await getWidgetArea("footer");
+	kontakt = area?.widgets?.find((w: any) => w.type === "content" && w.content) ?? null;
+} catch {
+	kontakt = null;
+}
+---
+
+<Base title="Kontakt">
+	<section class="kontakt container">
+		<div class="kontakt-text">
+			<h1>Kontakt</h1>
+			<p class="einleitung">Sie haben Fragen zu einem Haus oder möchten eine Besichtigung vereinbaren? Schreiben Sie uns.</p>
+			{kontakt && (
+				<div class="kontakt-daten">
+					<PortableText value={kontakt.content} />
+				</div>
+			)}
+		</div>
+		<div class="kontakt-formular">
+			<Form id="kontakt" />
+		</div>
+	</section>
+</Base>
+
+<style>
+	.kontakt {
+		padding-top: var(--spacing-4xl);
+		padding-bottom: var(--spacing-5xl);
+		display: grid;
+		grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+		gap: var(--spacing-4xl);
+	}
+
+	.kontakt h1 {
+		font-size: clamp(2.25rem, 5vw, 3.5rem);
+		font-weight: 300;
+	}
+
+	.einleitung {
+		margin-top: var(--spacing-md);
+		color: var(--color-muted);
+		max-width: 36ch;
+	}
+
+	.kontakt-daten {
+		margin-top: var(--spacing-2xl);
+		padding-top: var(--spacing-lg);
+		border-top: 1px solid var(--color-border);
+	}
+
+	.kontakt-daten :global(p) {
+		white-space: pre-line;
+	}
+
+	.kontakt-daten :global(p + p) {
+		margin-top: var(--spacing-sm);
+	}
+
+	.kontakt-daten :global(a) {
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	@media (max-width: 860px) {
+		.kontakt {
+			grid-template-columns: 1fr;
+			gap: var(--spacing-2xl);
+		}
+	}
+</style>

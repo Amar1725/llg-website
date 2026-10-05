@@ -3,6 +3,8 @@
 // danach Beschreibung und Eckdaten, dann die Bildergalerie.
 import { getEmDashEntry, getSeoMeta } from "emdash";
 import { Image, PortableText } from "emdash/ui";
+import { Form } from "@emdash-cms/plugin-forms/ui";
+import "@emdash-cms/plugin-forms/styles";
 import Base from "../../layouts/Base.astro";
 
 const { slug } = Astro.params;
@@ -70,7 +72,7 @@ const eckdaten = [
 						</dl>
 					)
 				}
-				<a href="#kontakt" class="btn btn-dunkel anfrage">Besichtigung anfragen</a>
+				<a href="#anfrage" class="btn btn-dunkel anfrage">Besichtigung anfragen</a>
 			</aside>
 		</div>
 
@@ -88,6 +90,16 @@ const eckdaten = [
 				</section>
 			)
 		}
+
+		<section class="anfrage-bereich container" id="anfrage" data-haus={d.title}>
+			<div class="anfrage-text">
+				<h2>Besichtigung anfragen</h2>
+				<p>Schreiben Sie uns, wann Sie das Haus ansehen möchten. Wir melden uns so rasch wie möglich bei Ihnen.</p>
+			</div>
+			<div class="anfrage-formular">
+				<Form id="kontakt" />
+			</div>
+		</section>
 	</article>
 
 	<dialog class="lightbox" aria-label="Bildansicht">
@@ -108,6 +120,11 @@ const eckdaten = [
 			});
 		});
 		dialog?.addEventListener("click", () => dialog.close());
+
+		// Hausname automatisch ins (versteckte) Feld "haus" des Formulars schreiben
+		const bereich = document.querySelector<HTMLElement>("#anfrage");
+		const hausFeld = bereich?.querySelector<HTMLInputElement>('[name="haus"]');
+		if (bereich && hausFeld && !hausFeld.value) hausFeld.value = bereich.dataset.haus ?? "";
 	</script>
 </Base>
 
@@ -234,7 +251,7 @@ const eckdaten = [
 
 	.galerie-bereich {
 		padding-top: var(--spacing-4xl);
-		padding-bottom: var(--spacing-5xl);
+		padding-bottom: var(--spacing-4xl);
 	}
 
 	.galerie-bereich h2 {
@@ -305,7 +322,32 @@ const eckdaten = [
 		cursor: pointer;
 	}
 
+	.anfrage-bereich {
+		padding-top: var(--spacing-4xl);
+		padding-bottom: var(--spacing-5xl);
+		border-top: 1px solid var(--color-border);
+		display: grid;
+		grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+		gap: var(--spacing-4xl);
+	}
+
+	.anfrage-text h2 {
+		font-size: clamp(1.75rem, 3vw, 2.5rem);
+		font-weight: 300;
+	}
+
+	.anfrage-text p {
+		margin-top: var(--spacing-md);
+		color: var(--color-muted);
+		max-width: 36ch;
+	}
+
 	@media (max-width: 860px) {
+		.anfrage-bereich {
+			grid-template-columns: 1fr;
+			gap: var(--spacing-xl);
+		}
+
 		.kopf {
 			min-height: 60vh;
 		}
