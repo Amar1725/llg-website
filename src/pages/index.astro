@@ -191,7 +191,7 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 		content: "";
 		position: absolute;
 		inset: 0;
-		background: linear-gradient(to top, rgb(0 0 0 / 0.55) 20%, rgb(0 0 0 / 0.35) 45%, rgb(0 0 0 / 0.05) 75%);
+		background: linear-gradient(to top, rgb(0 0 0 / 0.6) 25%, rgb(0 0 0 / 0.5) 50%, rgb(0 0 0 / 0.12) 85%);
 	}
 
 	/* Titel sitzt über der Ausblendung, nicht im hellen Bereich */
@@ -201,9 +201,11 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 		padding-bottom: clamp(11rem, 34vh, 20rem);
 	}
 
+	/* Weicher Schatten statt Umrandung: hebt den Titel vom Bild ab */
 	.hero h1 {
+		text-shadow: 0 2px 28px rgb(0 0 0 / 0.45), 0 1px 3px rgb(0 0 0 / 0.3);
 		font-size: clamp(2.5rem, 6vw, 5rem);
-		font-weight: 300;
+		font-weight: 400;
 		line-height: 1.08;
 		letter-spacing: -0.01em;
 		max-width: 15ch;
