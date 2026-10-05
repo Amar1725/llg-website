@@ -157,11 +157,11 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 <style>
 	.hero {
 		position: relative;
-		min-height: 86vh;
+		min-height: 92vh;
 		display: flex;
 		align-items: flex-end;
 		color: #ffffff;
-		background: #1c1d1e;
+		background: var(--color-bg);
 		overflow: hidden;
 	}
 
@@ -171,9 +171,12 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 		background: var(--color-surface);
 	}
 
+	/* Bild läuft nach unten transparent in den Seitenhintergrund aus */
 	.hero-bild {
 		position: absolute;
 		inset: 0;
+		-webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 100%);
+		mask-image: linear-gradient(to bottom, #000 62%, transparent 100%);
 	}
 
 	.hero-bild :global(img) {
@@ -183,18 +186,19 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 		object-fit: cover;
 	}
 
-	/* Abdunkeln nach unten, damit der weiße Titel lesbar bleibt */
+	/* Dunkle Zone hinter dem weißen Titel, damit er lesbar bleibt */
 	.hero-bild::after {
 		content: "";
 		position: absolute;
 		inset: 0;
-		background: linear-gradient(to top, rgb(0 0 0 / 0.62), rgb(0 0 0 / 0.08) 60%);
+		background: linear-gradient(to top, rgb(0 0 0 / 0.55) 20%, rgb(0 0 0 / 0.35) 45%, rgb(0 0 0 / 0.05) 75%);
 	}
 
+	/* Titel sitzt über der Ausblendung, nicht im hellen Bereich */
 	.hero-inhalt {
 		position: relative;
 		width: 100%;
-		padding-bottom: var(--spacing-4xl);
+		padding-bottom: clamp(9rem, 26vh, 15rem);
 	}
 
 	.hero h1 {
@@ -429,7 +433,7 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 
 	@media (max-width: 640px) {
 		.hero {
-			min-height: 72vh;
+			min-height: 80vh;
 		}
 
 		.raster {
