@@ -364,11 +364,18 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 		line-height: 1.7;
 	}
 
+	/* FAQ als zentrierter Block; Fragen und Antworten bleiben linksbündig lesbar */
 	.faq-bereich {
 		padding-top: var(--spacing-4xl);
 		padding-bottom: var(--spacing-5xl);
-		max-width: 900px;
-		margin-left: 0;
+		max-width: 860px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.faq-bereich .bereich-titel,
+	.faq-weiter {
+		text-align: center;
 	}
 
 	.faq details {

@@ -240,6 +240,15 @@ const isLoggedIn = !!Astro.locals.user;
 		<EmDashBodyEnd page={pageCtx} />
 
 		<script>
+			// Das Formular-Plugin liefert Textfelder (Nachricht) mit Leerzeichen und
+			// Tabs vorbefüllt aus. Dadurch startet der Cursor mitten im Feld, und ein
+			// "leeres" Pflichtfeld gilt als ausgefüllt. Hier werden sie geleert.
+			document.querySelectorAll<HTMLTextAreaElement>(".ec-form textarea").forEach((feld) => {
+				if (!feld.value.trim()) feld.value = "";
+			});
+		</script>
+
+		<script>
 			// Theme switcher
 			const THEME_REGEX = /theme=([^;]+)/;
 			const themeBtns =
