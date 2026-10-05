@@ -1,65 +1,18 @@
-# EmDash Marketing Template (Cloudflare)
+# Ludwig Living Group – Website
 
-A conversion-focused landing page template built with [EmDash](https://github.com/emdash-cms/emdash) and deployed on Cloudflare Workers with D1 and R2. Modular content blocks let you assemble pages from reusable sections without touching code.
+Website mit [EmDash](https://emdashcms.com) (Astro) auf Cloudflare Workers.
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/emdash-cms/templates/tree/main/marketing-cloudflare)
+- **Inhalte** (Häuser, Footer, Impressum, Datenschutz, Kontaktformular) werden im Admin unter `/_emdash/admin` gepflegt.
+- **Code und Design** liegen hier. Jeder Push auf `main` wird von Cloudflare automatisch gebaut und veröffentlicht.
+- **Design-Sicherung:** Das frühere Design „Stein & Moos“ liegt im Zweig `design-stein-moos`.
 
-![Marketing template homepage](https://raw.githubusercontent.com/emdash-cms/emdash/main/assets/templates/marketing/latest/homepage-light-desktop.jpg)
+## Wichtige Dateien
 
-## What's Included
-
-- Hero section with CTAs
-- Feature grid
-- Testimonials
-- Pricing cards
-- FAQ accordion
-- Contact page with direct email links
-- SEO metadata and JSON-LD
-- Dark/light mode
-
-## Pages
-
-| Page | Route |
+| Datei | Inhalt |
 |---|---|
-| Homepage | `/` |
-| Pricing | `/pricing` |
-| Contact | `/contact` |
-| 404 | fallback |
-
-## Screenshots
-
-| | Desktop | Mobile |
-|---|---|---|
-| Light | ![homepage light desktop](https://raw.githubusercontent.com/emdash-cms/emdash/main/assets/templates/marketing/latest/homepage-light-desktop.jpg) | ![homepage light mobile](https://raw.githubusercontent.com/emdash-cms/emdash/main/assets/templates/marketing/latest/homepage-light-mobile.jpg) |
-| Dark | ![homepage dark desktop](https://raw.githubusercontent.com/emdash-cms/emdash/main/assets/templates/marketing/latest/homepage-dark-desktop.jpg) | ![homepage dark mobile](https://raw.githubusercontent.com/emdash-cms/emdash/main/assets/templates/marketing/latest/homepage-dark-mobile.jpg) |
-
-## Infrastructure
-
-- **Runtime:** Cloudflare Workers
-- **Database:** D1
-- **Storage:** R2
-- **Framework:** Astro with `@astrojs/cloudflare`
-
-## Local Development
-
-```bash
-pnpm install
-pnpm dev
-```
-
-Open http://localhost:4321/_emdash/admin and complete the setup wizard. EmDash runs database migrations and applies the marketing seed during setup. The site is available at http://localhost:4321.
-
-## Deploying
-
-```bash
-pnpm wrangler login
-pnpm deploy
-```
-
-The first deployment provisions the named D1 database and R2 bucket from `wrangler.jsonc`. See [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) for production setup, or use the deploy button above.
-
-## See Also
-
-- [Node.js variant](../marketing) -- same template using SQLite and local file storage
-- [All templates](../)
-- [EmDash documentation](https://docs.emdashcms.com/)
+| `src/styles/theme.css` | Farben, Schrift, Buttons, Formular-Stil |
+| `src/layouts/Base.astro` | Kopfzeile, Footer |
+| `src/pages/index.astro` | Startseite |
+| `src/pages/haeuser/[slug].astro` | Detailseite eines Hauses |
+| `src/pages/kontakt.astro` | Kontaktseite |
+| `wrangler.jsonc` | Cloudflare-Konfiguration (Datenbank, Medien) |
