@@ -90,7 +90,6 @@ const isLoggedIn = !!Astro.locals.user;
 		<title>{fullTitle}</title>
 		<EmDashHead page={pageCtx} />
 		<Font cssVariable="--font-body" preload />
-		<Font cssVariable="--font-display" preload />
 		<script is:inline>
 			// Apply an explicit theme choice immediately to prevent flash.
 			// With no cookie, color-scheme: light dark follows the OS.
@@ -143,7 +142,7 @@ const isLoggedIn = !!Astro.locals.user;
 			<slot />
 		</main>
 
-		<footer class="site-footer">
+		<footer class="site-footer" id="kontakt">
 			<div class="footer-content">
 				<div class="footer-brand">
 					<span class="footer-logo">
@@ -494,9 +493,10 @@ const isLoggedIn = !!Astro.locals.user;
 
 			.site-logo {
 				font-family: var(--font-heading);
-				font-size: var(--font-size-2xl);
-				font-weight: 400;
-				letter-spacing: var(--tracking-tight);
+				font-size: var(--font-size-lg);
+				font-weight: 500;
+				letter-spacing: 0.32em;
+				text-transform: uppercase;
 				color: var(--color-text);
 			}
 

@@ -1,76 +1,107 @@
 /*
-  theme.css -- Design "Stein & Moos" für die Häuser-Seite.
+  theme.css -- Design "Modular hell": helles, architektonisches Design.
 
-  Farben aus Baumaterialien: kühler Kalkstein als Grund, Schiefer für
-  Text, Moos als einzige Akzentfarbe, Lärchenholz nur für Fokus und
-  feine Details. Keine Verläufe, keine Schatten: die Fotos der Häuser
-  tragen die Seite.
+  Weiss und Hellgrau als Grund, Anthrazit für Text und Buttons, keine
+  Akzentfarbe: die Fotos der Häuser bringen die Farbe. Kanten sind
+  bündig (kein Radius), viel Weissraum.
 
-  Schriften (geladen in astro.config.mjs):
-  - Gloock (--font-display) für Titel und Hausnamen
-  - Hanken Grotesk (--font-body) für Fliesstext und Eckdaten
+  Schrift (geladen in astro.config.mjs): Jost für alles, leichte
+  Schnitte für grosse Titel, Grossbuchstaben nur für Buttons und Logo.
 */
 
 :root {
-	/* Farben: light-dark(<hell>, <dunkel>) */
-	--color-bg: light-dark(#ecede8, #191d1e); /* Kalkstein / Nachtschiefer */
-	--color-surface: light-dark(#e2e4dd, #222728);
-	--color-text: light-dark(#22282a, #e7e8e3); /* Schiefer */
-	--color-muted: light-dark(#6a706c, #9aa19c); /* Nebel */
-	--color-border: light-dark(#cdd1c9, #343a3b); /* Fuge */
-	--color-brand: light-dark(#3d5544, #9dbfa7); /* Moos */
-	--color-brand-strong: light-dark(#2e4334, #b5d1bd);
-	--color-brand-soft: light-dark(#5f7a66, #7fa38a);
-	--color-accent: light-dark(#9c6b3f, #c99a6c); /* Lärche */
-	--color-accent-soft: light-dark(#b98a5e, #d8b18b);
-	--color-on-brand: light-dark(#ecede8, #191d1e);
+	--color-bg: light-dark(#ffffff, #151617);
+	--color-surface: light-dark(#f3f3f1, #1f2021);
+	--color-text: light-dark(#1c1d1e, #ececea);
+	--color-muted: light-dark(#6e6f70, #9b9c9d);
+	--color-border: light-dark(#e3e3e0, #2f3031);
+	--color-brand: light-dark(#1c1d1e, #ececea);
+	--color-brand-strong: light-dark(#000000, #ffffff);
+	--color-brand-soft: light-dark(#4a4b4c, #c9c9c7);
+	--color-accent: light-dark(#1c1d1e, #ececea);
+	--color-accent-soft: light-dark(#4a4b4c, #c9c9c7);
+	--color-on-brand: light-dark(#ffffff, #151617);
 
-	/* Flach statt Verlauf */
 	--gradient-brand: var(--color-brand);
 	--gradient-brand-strong: var(--color-brand-strong);
 	--gradient-brand-soft: var(--color-brand-soft);
 	--gradient-headline: var(--color-text);
 
-	/* Typografie */
-	--font-heading: var(--font-display), Georgia, serif;
+	--font-display: var(--font-body);
+	--font-heading: var(--font-body);
 	--font-weight-heading: 400;
-	--font-weight-display: 400;
-	--tracking-tight: -0.015em;
-	--tracking-snug: -0.01em;
-	--leading-normal: 1.65;
+	--font-weight-display: 300;
+	--tracking-tight: -0.01em;
+	--tracking-snug: 0;
+	--leading-normal: 1.7;
 
-	/* Formen */
-	--radius-sm: 2px;
-	--radius: 3px;
-	--radius-lg: 4px;
+	--radius-sm: 0;
+	--radius: 0;
+	--radius-lg: 0;
 	--shadow-sm: none;
 	--shadow: none;
 	--shadow-lg: none;
 	--shadow-xl: none;
 
-	--wide-width: 1280px;
+	--wide-width: 1320px;
 }
 
 @supports not (color: light-dark(#000, #fff)) {
 	:root {
-		--color-bg: #ecede8;
-		--color-surface: #e2e4dd;
-		--color-text: #22282a;
-		--color-muted: #6a706c;
-		--color-border: #cdd1c9;
-		--color-brand: #3d5544;
-		--color-brand-strong: #2e4334;
-		--color-accent: #9c6b3f;
-		--color-on-brand: #ecede8;
+		--color-bg: #ffffff;
+		--color-surface: #f3f3f1;
+		--color-text: #1c1d1e;
+		--color-muted: #6e6f70;
+		--color-border: #e3e3e0;
+		--color-brand: #1c1d1e;
+		--color-brand-strong: #000000;
+		--color-accent: #1c1d1e;
+		--color-on-brand: #ffffff;
 	}
 }
 
-::selection {
-	background: var(--color-brand);
+/* Buttons: eckig, Grossbuchstaben, gesperrt */
+.btn {
+	border-radius: 0;
+	text-transform: uppercase;
+	letter-spacing: 0.18em;
+	font-size: 0.78rem;
+	font-weight: 500;
+	padding: 1rem 2rem;
+}
+
+.btn:hover {
+	transform: none;
+}
+
+.btn-hell {
+	color: #ffffff;
+	background: transparent;
+	border: 1px solid rgb(255 255 255 / 0.8);
+}
+
+.btn-hell:hover {
+	color: #1c1d1e;
+	background: #ffffff;
+}
+
+.btn-dunkel {
 	color: var(--color-on-brand);
+	background: var(--color-brand);
+	border: 1px solid var(--color-brand);
+}
+
+.btn-dunkel:hover {
+	color: var(--color-brand);
+	background: transparent;
+}
+
+::selection {
+	background: var(--color-text);
+	color: var(--color-bg);
 }
 
 :focus-visible {
-	outline: 2px solid var(--color-accent);
+	outline: 2px solid var(--color-text);
 	outline-offset: 3px;
 }

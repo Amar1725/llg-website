@@ -57,17 +57,10 @@ export default defineConfig({
 	fonts: [
 		{
 			provider: fontProviders.google(),
-			name: "Hanken Grotesk",
+			name: "Jost",
 			cssVariable: "--font-body",
-			weights: [400, 500, 600],
+			weights: [300, 400, 500],
 			fallbacks: ["sans-serif"],
-		},
-		{
-			provider: fontProviders.google(),
-			name: "Gloock",
-			cssVariable: "--font-display",
-			weights: [400],
-			fallbacks: ["Georgia", "serif"],
 		},
 	],
 	devToolbar: { enabled: false },

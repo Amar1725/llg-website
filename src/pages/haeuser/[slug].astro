@@ -1,5 +1,6 @@
 ---
-// Detailseite für ein Haus: Titelbild, Eckdaten, Beschreibung und Bildergalerie.
+// Detailseite für ein Haus: Titelbild über die ganze Breite mit Titel,
+// danach Beschreibung und Eckdaten, dann die Bildergalerie.
 import { getEmDashEntry, getSeoMeta } from "emdash";
 import { Image, PortableText } from "emdash/ui";
 import Base from "../../layouts/Base.astro";
@@ -35,44 +36,48 @@ const eckdaten = [
 	canonical={seo.canonical}
 	content={{ collection: "hauser", id: d.id, slug: haus.id }}
 >
-	<article class="haus">
-		<header class="kopf container">
-			<a href="/" class="zurueck">Zurück zur Übersicht</a>
-			<h1 {...haus.edit.title}>{d.title}</h1>
-			{d.ort && <p class="ort" {...haus.edit.ort}>{d.ort}</p>}
-		</header>
-
-		{
-			d.titelbild && (
-				<div class="titelbild container" {...haus.edit.titelbild}>
-					<Image image={d.titelbild} />
-				</div>
-			)
-		}
-
-		<div class="inhalt container">
+	<article>
+		<header class:list={["kopf", { "ohne-bild": !d.titelbild }]}>
 			{
-				eckdaten.length > 0 && (
-					<dl class="eckdaten">
-						{eckdaten.map((e) => (
-							<div>
-								<dt>{e.label}</dt>
-								<dd>{e.wert}</dd>
-							</div>
-						))}
-					</dl>
+				d.titelbild && (
+					<div class="kopf-bild" {...haus.edit.titelbild}>
+						<Image image={d.titelbild} />
+					</div>
 				)
 			}
+			<div class="kopf-text container">
+				{d.ort && <p class="ort" {...haus.edit.ort}>{d.ort}</p>}
+				<h1 {...haus.edit.title}>{d.title}</h1>
+			</div>
+		</header>
 
+		<div class="inhalt container">
 			<div class="beschreibung" {...haus.edit.beschreibung}>
+				<a href="/#haeuser" class="zurueck">Alle Häuser</a>
 				{d.beschreibung ? <PortableText value={d.beschreibung} /> : null}
 			</div>
+
+			<aside class="seite">
+				{
+					eckdaten.length > 0 && (
+						<dl class="eckdaten">
+							{eckdaten.map((e) => (
+								<div>
+									<dt>{e.label}</dt>
+									<dd>{e.wert}</dd>
+								</div>
+							))}
+						</dl>
+					)
+				}
+				<a href="#kontakt" class="btn btn-dunkel anfrage">Besichtigung anfragen</a>
+			</aside>
 		</div>
 
 		{
 			galerie.length > 0 && (
 				<section class="galerie-bereich container" aria-label="Bildergalerie">
-					<h2>Bilder</h2>
+					<h2>Galerie</h2>
 					<div class="galerie" {...haus.edit.galerie}>
 						{galerie.map((row) => (
 							<button type="button" class="galerie-bild" aria-label="Bild gross anzeigen">
@@ -107,76 +112,109 @@ const eckdaten = [
 </Base>
 
 <style>
-	.haus {
-		padding-bottom: var(--spacing-5xl);
+	.kopf {
+		position: relative;
+		min-height: 78vh;
+		display: flex;
+		align-items: flex-end;
+		color: #ffffff;
+		background: #1c1d1e;
+		overflow: hidden;
 	}
 
-	.kopf {
-		padding-top: var(--spacing-2xl);
-		padding-bottom: var(--spacing-2xl);
+	.kopf.ohne-bild {
+		min-height: 40vh;
+		color: var(--color-text);
+		background: var(--color-surface);
+	}
+
+	.kopf-bild {
+		position: absolute;
+		inset: 0;
+	}
+
+	.kopf-bild :global(img) {
+		width: 100%;
+		height: 100%;
+		max-width: none;
+		object-fit: cover;
+	}
+
+	.kopf-bild::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(to top, rgb(0 0 0 / 0.6), rgb(0 0 0 / 0.05) 55%);
+		pointer-events: none;
+	}
+
+	.kopf-text {
+		position: relative;
+		width: 100%;
+		padding-bottom: var(--spacing-3xl);
+	}
+
+	.ort {
+		font-size: var(--font-size-lg);
+		opacity: 0.9;
+	}
+
+	.kopf h1 {
+		margin-top: var(--spacing-xs);
+		font-size: clamp(2.5rem, 6vw, 4.75rem);
+		font-weight: 300;
+		line-height: 1.05;
+	}
+
+	.inhalt {
+		padding-top: var(--spacing-4xl);
+		display: grid;
+		grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+		gap: var(--spacing-4xl);
+		align-items: start;
 	}
 
 	.zurueck {
 		display: inline-block;
-		margin-bottom: var(--spacing-2xl);
+		margin-bottom: var(--spacing-xl);
 		font-size: var(--font-size-sm);
 		color: var(--color-muted);
 		text-decoration: underline;
 		text-underline-offset: 4px;
-		text-decoration-color: var(--color-border);
 	}
 
 	.zurueck:hover {
 		color: var(--color-text);
-		text-decoration-color: var(--color-accent);
 	}
 
-	.kopf h1 {
-		font-size: clamp(2.75rem, 7vw, 5.5rem);
-		line-height: 0.98;
-		letter-spacing: -0.02em;
-		max-width: 16ch;
-	}
-
-	.ort {
-		margin-top: var(--spacing-md);
+	.beschreibung {
 		font-size: var(--font-size-lg);
-		font-weight: 500;
-		color: var(--color-brand);
+		font-weight: 300;
+		line-height: 1.8;
+		max-width: 64ch;
 	}
 
-	.titelbild {
-		aspect-ratio: 16 / 9;
+	.beschreibung :global(p + p) {
+		margin-top: var(--spacing-md);
 	}
 
-	.titelbild :global(img) {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		max-width: none;
-		border-radius: var(--radius);
-	}
-
-	.inhalt {
-		margin-top: var(--spacing-3xl);
-		display: grid;
-		grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
-		gap: var(--spacing-3xl);
-		align-items: start;
-	}
-
-	.eckdaten {
-		border-top: 1px solid var(--color-text);
+	.seite {
 		position: sticky;
-		top: 96px;
+		top: 100px;
+		background: var(--color-surface);
+		padding: var(--spacing-xl);
 	}
 
 	.eckdaten div {
 		display: flex;
 		justify-content: space-between;
 		gap: var(--spacing-md);
-		padding: 0.8rem 0;
+		padding: 0.85rem 0;
 		border-bottom: 1px solid var(--color-border);
+	}
+
+	.eckdaten div:first-child {
+		padding-top: 0;
 	}
 
 	.eckdaten dt {
@@ -188,58 +226,50 @@ const eckdaten = [
 		font-variant-numeric: tabular-nums;
 	}
 
-	.beschreibung {
-		font-size: var(--font-size-lg);
-		line-height: 1.75;
-		max-width: 62ch;
-	}
-
-	.beschreibung :global(p + p) {
-		margin-top: var(--spacing-md);
-	}
-
-	.beschreibung :global(h2),
-	.beschreibung :global(h3) {
-		margin: var(--spacing-xl) 0 var(--spacing-sm);
+	.anfrage {
+		display: flex;
+		width: 100%;
+		margin-top: var(--spacing-xl);
 	}
 
 	.galerie-bereich {
-		margin-top: var(--spacing-4xl);
+		padding-top: var(--spacing-4xl);
+		padding-bottom: var(--spacing-5xl);
 	}
 
 	.galerie-bereich h2 {
-		font-size: var(--font-size-3xl);
-		margin-bottom: var(--spacing-lg);
+		font-size: clamp(1.75rem, 3vw, 2.5rem);
+		font-weight: 300;
+		padding-bottom: var(--spacing-lg);
+		margin-bottom: var(--spacing-2xl);
+		border-bottom: 1px solid var(--color-border);
 	}
 
 	.galerie {
 		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 		gap: var(--spacing-md);
 	}
 
 	.galerie-bild {
-		aspect-ratio: 4 / 3;
+		aspect-ratio: 3 / 2;
 		padding: 0;
 		border: none;
-		border-radius: var(--radius);
 		overflow: hidden;
 		cursor: zoom-in;
 		background: var(--color-surface);
 	}
 
-	/* Das erste Galeriebild bekommt mehr Platz */
-	.galerie-bild:first-child {
-		grid-column: span 2;
-		grid-row: span 2;
-		aspect-ratio: auto;
-	}
-
 	.galerie-bild :global(img) {
 		width: 100%;
 		height: 100%;
-		object-fit: cover;
 		max-width: none;
+		object-fit: cover;
+		transition: transform 700ms ease;
+	}
+
+	.galerie-bild:hover :global(img) {
+		transform: scale(1.04);
 	}
 
 	.lightbox {
@@ -253,7 +283,7 @@ const eckdaten = [
 	}
 
 	.lightbox::backdrop {
-		background: rgb(25 29 30 / 0.92);
+		background: rgb(10 10 10 / 0.92);
 	}
 
 	.lightbox img {
@@ -268,8 +298,7 @@ const eckdaten = [
 		right: 16px;
 		width: 44px;
 		height: 44px;
-		border: 1px solid rgb(255 255 255 / 0.3);
-		border-radius: 50%;
+		border: 1px solid rgb(255 255 255 / 0.4);
 		background: transparent;
 		color: white;
 		font-size: 1.1rem;
@@ -277,17 +306,23 @@ const eckdaten = [
 	}
 
 	@media (max-width: 860px) {
+		.kopf {
+			min-height: 60vh;
+		}
+
 		.inhalt {
 			grid-template-columns: 1fr;
 			gap: var(--spacing-2xl);
 		}
 
-		.eckdaten {
+		.seite {
 			position: static;
 		}
+	}
 
-		.galerie {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
+	@media (prefers-reduced-motion: reduce) {
+		.galerie-bild :global(img) {
+			transition: none;
 		}
 	}
 </style>
