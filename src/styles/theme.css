@@ -9,18 +9,26 @@
   Schnitte für grosse Titel, Grossbuchstaben nur für Buttons und Logo.
 */
 
+/*
+  Farben ohne light-dark(): Der Build wandelt light-dark() in eine
+  Variante um, die nur auf die Systemeinstellung reagiert. Mit den
+  folgenden drei Blöcken funktioniert auch der Hell/Dunkel-Umschalter
+  im Footer (Klasse .light / .dark auf <html>).
+*/
 :root {
-	--color-bg: light-dark(#ffffff, #151617);
-	--color-surface: light-dark(#f3f3f1, #1f2021);
-	--color-text: light-dark(#1c1d1e, #ececea);
-	--color-muted: light-dark(#6e6f70, #9b9c9d);
-	--color-border: light-dark(#e3e3e0, #2f3031);
-	--color-brand: light-dark(#1c1d1e, #ececea);
-	--color-brand-strong: light-dark(#000000, #ffffff);
-	--color-brand-soft: light-dark(#4a4b4c, #c9c9c7);
-	--color-accent: light-dark(#1c1d1e, #ececea);
-	--color-accent-soft: light-dark(#4a4b4c, #c9c9c7);
-	--color-on-brand: light-dark(#ffffff, #151617);
+	color-scheme: light;
+	--color-bg: #ffffff;
+	--color-surface: #f3f3f1;
+	--color-text: #1c1d1e;
+	--color-muted: #6e6f70;
+	--color-border: #e3e3e0;
+	--color-brand: #1c1d1e;
+	--color-brand-strong: #000000;
+	--color-brand-soft: #4a4b4c;
+	--color-accent: #1c1d1e;
+	--color-accent-soft: #4a4b4c;
+	--color-on-brand: #ffffff;
+	--color-danger: #c62828;
 
 	--gradient-brand: var(--color-brand);
 	--gradient-brand-strong: var(--color-brand-strong);
@@ -46,18 +54,38 @@
 	--wide-width: 1320px;
 }
 
-@supports not (color: light-dark(#000, #fff)) {
-	:root {
-		--color-bg: #ffffff;
-		--color-surface: #f3f3f1;
-		--color-text: #1c1d1e;
-		--color-muted: #6e6f70;
-		--color-border: #e3e3e0;
-		--color-brand: #1c1d1e;
-		--color-brand-strong: #000000;
-		--color-accent: #1c1d1e;
-		--color-on-brand: #ffffff;
+@media (prefers-color-scheme: dark) {
+	:root:not(.light) {
+		color-scheme: dark;
+		--color-bg: #151617;
+		--color-surface: #1f2021;
+		--color-text: #ececea;
+		--color-muted: #9b9c9d;
+		--color-border: #2f3031;
+		--color-brand: #ececea;
+		--color-brand-strong: #ffffff;
+		--color-brand-soft: #c9c9c7;
+		--color-accent: #ececea;
+		--color-accent-soft: #c9c9c7;
+		--color-on-brand: #151617;
+		--color-danger: #f87171;
 	}
+}
+
+:root.dark {
+	color-scheme: dark;
+	--color-bg: #151617;
+	--color-surface: #1f2021;
+	--color-text: #ececea;
+	--color-muted: #9b9c9d;
+	--color-border: #2f3031;
+	--color-brand: #ececea;
+	--color-brand-strong: #ffffff;
+	--color-brand-soft: #c9c9c7;
+	--color-accent: #ececea;
+	--color-accent-soft: #c9c9c7;
+	--color-on-brand: #151617;
+	--color-danger: #f87171;
 }
 
 /* Buttons: eckig, Grossbuchstaben, gesperrt */
