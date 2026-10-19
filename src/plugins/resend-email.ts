@@ -11,6 +11,7 @@
  */
 import { definePlugin } from "emdash";
 import type { PluginDescriptor, ResolvedPlugin } from "emdash";
+import { anfrageMail } from "./anfrage-mail";
 
 export interface ResendEmailConfig {
 	/** Absender, z. B. "Ludwig Living Group <website@ludwiglivinggroup.de>" */
@@ -35,7 +36,9 @@ export function createPlugin(config: ResendEmailConfig): ResolvedPlugin {
 			"email:deliver": {
 				exclusive: true,
 				handler: async (event, ctx) => {
-					const { message } = event;
+					// Anfrage-Benachrichtigungen auf Deutsch nach unserer Vorlage
+					const anfrage = anfrageMail(event.message.subject, event.message.text);
+					const message = anfrage ? { ...event.message, ...anfrage } : event.message;
 					const response = await fetch("https://api.resend.com/emails", {
 						method: "POST",
 						headers: {
