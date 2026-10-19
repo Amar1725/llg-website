@@ -12,6 +12,7 @@
 import { definePlugin } from "emdash";
 import type { PluginDescriptor, ResolvedPlugin } from "emdash";
 import { anfrageMail } from "./anfrage-mail";
+import { BESTAETIGUNG_BETREFF, bestaetigungLaden } from "./bestaetigung-mail";
 
 export interface ResendEmailConfig {
 	/** Absender, z. B. "Ludwig Living Group <website@ludwiglivinggroup.de>" */
@@ -38,7 +39,18 @@ export function createPlugin(config: ResendEmailConfig): ResolvedPlugin {
 				handler: async (event, ctx) => {
 					// Anfrage-Benachrichtigungen auf Deutsch nach unserer Vorlage
 					const anfrage = anfrageMail(event.message.subject, event.message.text);
-					const message = anfrage ? { ...event.message, ...anfrage } : event.message;
+					let message = anfrage ? { ...event.message, ...anfrage } : event.message;
+					// Eingangsbestätigung: Betreff und Text aus dem Widget "E-Mail-Bestätigung"
+					if (event.message.subject === BESTAETIGUNG_BETREFF) {
+						try {
+							const { env } = await import("cloudflare:workers");
+							const db = (env as Record<string, unknown>).DB as Parameters<typeof bestaetigungLaden>[0];
+							const widget = db ? await bestaetigungLaden(db) : null;
+							if (widget) message = { ...message, ...widget, html: undefined };
+						} catch (err) {
+							ctx.log.error("Bestätigungstext aus Widget nicht lesbar, Standardtext verwendet", { error: String(err) });
+						}
+					}
 					const response = await fetch("https://api.resend.com/emails", {
 						method: "POST",
 						headers: {
