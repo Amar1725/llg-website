@@ -5,7 +5,7 @@ import icon from "astro-iconset";
 import { defineConfig, fontProviders } from "astro/config";
 import emdash from "emdash/astro";
 import { formsPlugin } from "@emdash-cms/plugin-forms";
-import resend from "emdash-plugin-resend";
+import { cloudflareEmail } from "@emdash-cms/cloudflare/plugins/cloudflare-email";
 
 export default defineConfig({
 	output: "server",
@@ -55,9 +55,13 @@ export default defineConfig({
 			database: d1({ binding: "DB", session: "auto" }),
 			storage: r2({ binding: "MEDIA" }),
 			// Kontaktformular: Formulare im Admin bauen, Anfragen landen unter "Submissions"
-			// E-Mail-Versand über Resend (Benachrichtigung bei neuen Anfragen).
-			// API-Schlüssel und Absender im Admin unter "Resend" eintragen.
-			plugins: [formsPlugin({ defaultSpamProtection: "honeypot" }), resend()],
+			// E-Mail-Versand über Cloudflare (Benachrichtigung bei neuen Anfragen)
+			plugins: [
+				formsPlugin({ defaultSpamProtection: "honeypot" }),
+				cloudflareEmail({
+					from: { email: "website@ludwiglivinggroup.de", name: "Website Ludwig Living Group" },
+				}),
+			],
 		}),
 	],
 	fonts: [
