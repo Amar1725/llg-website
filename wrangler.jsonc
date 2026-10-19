@@ -23,7 +23,6 @@
 			"bucket_name": "emdash-test-media"
 		}
 	],
-	"send_email": [{ "name": "EMAIL", "destination_address": "contact@ludwiglivinggroup.de" }],
 	"triggers": {
 		"crons": ["0 * * * *"]
 	}
