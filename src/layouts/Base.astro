@@ -97,6 +97,16 @@ const isLoggedIn = !!Astro.locals.user;
 		<meta name="theme-color" content="#1c1d1e" />
 		<Font cssVariable="--font-body" preload />
 		<script is:inline>
+			// Kontaktformular bei jedem Seitenaufruf leer starten: das Forms-Plugin
+			// merkt sich Eingaben sonst im Browser und füllt sie auf anderen Seiten wieder ein.
+			try {
+				for (var k = sessionStorage.length - 1; k >= 0; k--) {
+					var key = sessionStorage.key(k);
+					if (key && key.indexOf("ec-form:") === 0) sessionStorage.removeItem(key);
+				}
+			} catch (e) {}
+		</script>
+		<script is:inline>
 			// Apply an explicit theme choice immediately to prevent flash.
 			// With no cookie, color-scheme: light dark follows the OS.
 			(function () {
