@@ -4,6 +4,11 @@
 	"main": "./src/worker.ts",
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
+	"workers_dev": true,
+	"routes": [
+		{ "pattern": "ludwiglivinggroup.de", "custom_domain": true },
+		{ "pattern": "www.ludwiglivinggroup.de", "custom_domain": true }
+	],
 	"d1_databases": [
 		{
 			"binding": "DB",
