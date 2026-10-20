@@ -85,9 +85,20 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 			<section class="haeuser container" id="modelle">
 				<header class="haeuser-kopf">
 					<h2>Unsere Modelle</h2>
-					<p>{anzahl === 1 ? "Ein Modell" : `${anzahl} Modelle`}, Grundriss und Ausstattung anpassbar</p>
+					<div class="kopf-rechts">
+						<p>{anzahl === 1 ? "Ein Modell" : `${anzahl} Modelle`}, Grundriss und Ausstattung anpassbar</p>
+						{/* Pfeile: werden per Skript nur angezeigt, wenn es mehr Modelle gibt als Platz */}
+						<div class="pfeile" data-pfeile hidden>
+							<button type="button" class="pfeil" data-zurueck aria-label="Vorheriges Modell">
+								<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15,5 8,12 15,19" /></svg>
+							</button>
+							<button type="button" class="pfeil" data-weiter aria-label="Nächstes Modell">
+								<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9,5 16,12 9,19" /></svg>
+							</button>
+						</div>
+					</div>
 				</header>
-				<div class="raster">
+				<div class="raster" data-karussell role="region" aria-label="Modelle" tabindex="0">
 					{haeuser.map((haus) => (
 						<a href={`/modelle/${haus.id}`} class="kachel">
 							<div class="kachel-bild">
@@ -238,13 +249,77 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 		color: var(--color-muted);
 	}
 
-	.raster {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+	/* Modelle als Karussell: 3 nebeneinander, mit Pfeilen weiterblättern */
+	.kopf-rechts {
+		display: flex;
+		align-items: center;
 		gap: var(--spacing-lg);
+		flex-wrap: wrap;
+	}
+
+	.pfeile {
+		display: flex;
+		gap: var(--spacing-xs);
+	}
+
+	.pfeile[hidden] {
+		display: none;
+	}
+
+	.pfeil {
+		width: 44px;
+		height: 44px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid var(--color-text);
+		border-radius: 0;
+		background: transparent;
+		color: var(--color-text);
+		cursor: pointer;
+		transition: background-color 200ms ease, color 200ms ease, opacity 200ms ease;
+	}
+
+	.pfeil svg {
+		width: 18px;
+		height: 18px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.5;
+	}
+
+	.pfeil:hover:not(:disabled) {
+		background: var(--color-text);
+		color: var(--color-bg);
+	}
+
+	.pfeil:disabled {
+		opacity: 0.3;
+		cursor: default;
+	}
+
+	.raster {
+		--spalten: 3;
+		display: flex;
+		gap: var(--spacing-lg);
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		scroll-behavior: smooth;
+		scrollbar-width: none;
+		overscroll-behavior-x: contain;
+	}
+
+	.raster::-webkit-scrollbar {
+		display: none;
+	}
+
+	.raster:focus-visible {
+		outline-offset: 6px;
 	}
 
 	.kachel {
+		flex: 0 0 calc((100% - (var(--spalten) - 1) * var(--spacing-lg)) / var(--spalten));
+		scroll-snap-align: start;
 		position: relative;
 		display: block;
 		aspect-ratio: 4 / 5;
@@ -438,18 +513,61 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 			min-height: 80vh;
 		}
 
-		.raster {
-			grid-template-columns: 1fr;
-		}
-
+		/* Handy: ein Modell, das nächste schaut am Rand hervor (wischen) */
 		.kachel {
+			flex-basis: 85%;
 			aspect-ratio: 4 / 4.5;
 		}
 	}
 
+	@media (min-width: 641px) and (max-width: 1000px) {
+		.raster {
+			--spalten: 2;
+		}
+	}
+
 	@media (prefers-reduced-motion: reduce) {
+		.raster {
+			scroll-behavior: auto;
+		}
+
 		.kachel-bild :global(img) {
 			transition: none;
 		}
 	}
 </style>
+
+<script>
+	// Karussell der Modelle: Pfeile blättern um ein Modell weiter.
+	// Pfeile erscheinen nur, wenn nicht alle Modelle gleichzeitig Platz haben.
+	function karussellStarten() {
+		const raster = document.querySelector<HTMLElement>("[data-karussell]");
+		const pfeile = document.querySelector<HTMLElement>("[data-pfeile]");
+		if (!raster || !pfeile) return;
+		const zurueck = pfeile.querySelector<HTMLButtonElement>("[data-zurueck]");
+		const weiter = pfeile.querySelector<HTMLButtonElement>("[data-weiter]");
+		if (!zurueck || !weiter) return;
+
+		const schritt = () => {
+			const kachel = raster.querySelector<HTMLElement>(".kachel");
+			if (!kachel) return raster.clientWidth;
+			const abstand = parseFloat(getComputedStyle(raster).columnGap || "0") || 0;
+			return kachel.getBoundingClientRect().width + abstand;
+		};
+
+		const aktualisieren = () => {
+			const max = raster.scrollWidth - raster.clientWidth;
+			pfeile.hidden = max <= 2;
+			zurueck.disabled = raster.scrollLeft <= 2;
+			weiter.disabled = raster.scrollLeft >= max - 2;
+		};
+
+		zurueck.addEventListener("click", () => raster.scrollBy({ left: -schritt() }));
+		weiter.addEventListener("click", () => raster.scrollBy({ left: schritt() }));
+		raster.addEventListener("scroll", aktualisieren, { passive: true });
+		window.addEventListener("resize", aktualisieren);
+		aktualisieren();
+	}
+
+	karussellStarten();
+</script>
