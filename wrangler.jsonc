@@ -4,10 +4,13 @@
 	"main": "./src/worker.ts",
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
-	// Übergang ins Konto des Kunden: zuerst nur über workers.dev testen.
-	// Die Domains (routes) kommen erst dazu, wenn die Domain im neuen Konto liegt.
-	"workers_dev": true,
+	// Website läuft nur über die eigene Domain (workers.dev-Adresse aus).
+	"workers_dev": false,
 	"preview_urls": false,
+	"routes": [
+		{ "pattern": "ludwiglivinggroup.de", "custom_domain": true },
+		{ "pattern": "www.ludwiglivinggroup.de", "custom_domain": true }
+	],
 	"d1_databases": [
 		{
 			"binding": "DB",
