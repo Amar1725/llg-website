@@ -15,6 +15,13 @@
 			"database_id": "83a61769-33a9-48ec-b56d-f0b1673ff5e6"
 		}
 	],
+	// Sitzungs-Speicher für Anmeldungen (fest eingetragen, damit der Build ihn nicht neu anlegen will)
+	"kv_namespaces": [
+		{
+			"binding": "SESSION",
+			"id": "b076d71a1250418cb62c923c9628cba6"
+		}
+	],
 	"r2_buckets": [
 		{
 			"binding": "MEDIA",
