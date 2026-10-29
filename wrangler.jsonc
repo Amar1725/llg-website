@@ -4,23 +4,22 @@
 	"main": "./src/worker.ts",
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
-	"workers_dev": false,
+	// Übergang ins Konto des Kunden: zuerst nur über workers.dev testen.
+	// Die Domains (routes) kommen erst dazu, wenn die Domain im neuen Konto liegt.
+	"workers_dev": true,
 	"preview_urls": false,
-	"routes": [
-		{ "pattern": "ludwiglivinggroup.de", "custom_domain": true },
-		{ "pattern": "www.ludwiglivinggroup.de", "custom_domain": true }
-	],
 	"d1_databases": [
 		{
 			"binding": "DB",
-			"database_name": "emdash-test-eu",
-			"database_id": "030762ec-976d-4525-acc6-6504b5f15225"
+			"database_name": "ludwiglivinggroup-db",
+			"database_id": "83a61769-33a9-48ec-b56d-f0b1673ff5e6"
 		}
 	],
 	"r2_buckets": [
 		{
 			"binding": "MEDIA",
-			"bucket_name": "emdash-test-media"
+			"bucket_name": "ludwiglivinggroup-media",
+			"jurisdiction": "eu"
 		}
 	],
 	"triggers": {
