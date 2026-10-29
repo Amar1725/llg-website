@@ -11,8 +11,8 @@
 	"d1_databases": [
 		{
 			"binding": "DB",
-			"database_name": "ludwiglivinggroup-db",
-			"database_id": "d620bb9c-0768-4aa2-b11d-a6a418ce44f3"
+			"database_name": "ludwiglivinggroup-daten",
+			"database_id": "c39e5ce6-63e5-4560-8d1d-c85f52bc25be"
 		}
 	],
 	// Sitzungs-Speicher für Anmeldungen (fest eingetragen, damit der Build ihn nicht neu anlegen will)
