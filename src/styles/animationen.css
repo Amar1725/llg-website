@@ -101,6 +101,46 @@
 	transform: none;
 }
 
+/* --- Modell-Kacheln -------------------------------------------------- */
+/* Die Kachel steigt weich auf, das Foto kommt unscharf und vergrössert
+   herein und wird scharf; danach gleiten Name und Eckdaten nach. */
+.bewegt [data-kachel] {
+	--verz: calc(min(var(--i, 0), 4) * 160ms);
+	opacity: 0;
+	transform: translate3d(0, 80px, 0);
+	transition:
+		opacity 1000ms var(--anim-kurve) var(--verz),
+		transform 1400ms var(--anim-kurve) var(--verz);
+}
+
+.bewegt [data-kachel] .kachel-bild {
+	transform: scale(1.25);
+	filter: blur(10px) saturate(0.5);
+	transition:
+		transform 2200ms var(--anim-kurve) var(--verz),
+		filter 1400ms ease var(--verz);
+}
+
+.bewegt [data-kachel] .kachel-text > * {
+	opacity: 0;
+	transform: translate3d(0, 24px, 0);
+	transition:
+		opacity 800ms var(--anim-kurve) calc(var(--verz) + 550ms),
+		transform 1000ms var(--anim-kurve) calc(var(--verz) + 550ms);
+}
+
+.bewegt [data-kachel] .kachel-text > p {
+	transition-delay: calc(var(--verz) + 700ms);
+}
+
+.bewegt [data-kachel].sichtbar,
+.bewegt [data-kachel].sichtbar .kachel-bild,
+.bewegt [data-kachel].sichtbar .kachel-text > * {
+	opacity: 1;
+	transform: none;
+	filter: none;
+}
+
 /* --- Titelbild: langsamer Zoom beim Laden ---------------------------- */
 .bewegt [data-titelbild] img {
 	transform: scale(1.12);
@@ -128,60 +168,6 @@
 		to {
 			transform: translate3d(0, 22vh, 0);
 		}
-	}
-}
-
-/* --- Laufband -------------------------------------------------------- */
-.laufband {
-	overflow: hidden;
-	border-bottom: 1px solid var(--color-border);
-	padding: var(--spacing-lg) 0;
-	user-select: none;
-}
-
-.laufband-spur {
-	display: flex;
-	width: max-content;
-}
-
-.laufband-gruppe {
-	display: flex;
-	flex-shrink: 0;
-	align-items: center;
-}
-
-.laufband-gruppe span {
-	font-size: clamp(1.5rem, 3.4vw, 3rem);
-	font-weight: 300;
-	letter-spacing: -0.01em;
-	white-space: nowrap;
-	padding: 0 0.6em;
-}
-
-/* Trennzeichen: das Haus aus dem Logo, als kleines Quadrat angedeutet */
-.laufband-gruppe span::after {
-	content: "";
-	display: inline-block;
-	width: 0.28em;
-	height: 0.28em;
-	margin-left: 1.2em;
-	vertical-align: middle;
-	border: 1px solid currentColor;
-	transform: rotate(45deg);
-	opacity: 0.5;
-}
-
-.bewegt .laufband-spur {
-	animation: laufband 38s linear infinite;
-}
-
-.laufband:hover .laufband-spur {
-	animation-play-state: paused;
-}
-
-@keyframes laufband {
-	to {
-		transform: translate3d(-50%, 0, 0);
 	}
 }
 

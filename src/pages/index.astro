@@ -43,9 +43,6 @@ const anzahl = haeuser.length;
 const heroBild = haeuser.find((h) => h.data.titelbild)?.data.titelbild;
 const teilenBild = bildUrl(heroBild, Astro.url.origin);
 
-// Laufband unter dem Titelbild: die Schritte aus "So funktioniert es"
-// (im Admin bearbeitbar), sonst der Slogan.
-const laufband: string[] = ablauf.length > 0 ? ablauf.map((s: any) => s.title).filter(Boolean) : [slogan];
 ---
 
 <Base title={titel} description={slogan} image={teilenBild}>
@@ -89,16 +86,6 @@ const laufband: string[] = ablauf.length > 0 ? ablauf.map((s: any) => s.title).f
 		)}
 	</section>
 
-	<div class="laufband" aria-hidden="true">
-		<div class="laufband-spur">
-			{[0, 1].map(() => (
-				<div class="laufband-gruppe">
-					{[...laufband, ...laufband].map((eintrag) => <span>{eintrag}</span>)}
-				</div>
-			))}
-		</div>
-	</div>
-
 	{
 		anzahl === 0 ? (
 			<section class="leer container">
@@ -116,28 +103,19 @@ const laufband: string[] = ablauf.length > 0 ? ablauf.map((s: any) => s.title).f
 					<h2 data-zeilen>Unsere Modelle</h2>
 					<div class="kopf-rechts" data-reveal style="--i: 2">
 						<p>{anzahl === 1 ? "Ein Modell" : `${anzahl} Modelle`}, Grundriss und Ausstattung anpassbar</p>
-						{/* Pfeile: werden per Skript nur angezeigt, wenn es mehr Modelle gibt als Platz */}
-						<div class="pfeile" data-pfeile hidden>
-							<button type="button" class="pfeil" data-zurueck aria-label="Vorheriges Modell">
-								<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15,5 8,12 15,19" /></svg>
-							</button>
-							<button type="button" class="pfeil" data-weiter aria-label="Nächstes Modell">
-								<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9,5 16,12 9,19" /></svg>
-							</button>
-						</div>
 					</div>
 				</header>
 				<div class="raster" data-karussell data-staffel role="region" aria-label="Modelle" tabindex="0">
 					{haeuser.map((haus) => (
-						<a href={`/modelle/${haus.id}`} class="kachel">
-							<div class="kachel-bild" data-vorhang>
+						<a href={`/modelle/${haus.id}`} class="kachel" data-kachel>
+							<div class="kachel-bild">
 								{haus.data.titelbild ? (
 									<Image image={haus.data.titelbild} />
 								) : (
 									<span class="platzhalter">Noch kein Titelbild</span>
 								)}
 							</div>
-							<div class="kachel-text" data-reveal style="--anim-staffel: 140ms">
+							<div class="kachel-text">
 								<h3>{haus.data.title}</h3>
 								<p>
 									{[
@@ -285,53 +263,12 @@ const laufband: string[] = ablauf.length > 0 ? ablauf.map((s: any) => s.title).f
 		color: var(--color-muted);
 	}
 
-	/* Modelle als Karussell: 3 nebeneinander, mit Pfeilen weiterblättern */
+	/* Modelle als Karussell: 3 nebeneinander, mit der Maus ziehen oder wischen */
 	.kopf-rechts {
 		display: flex;
 		align-items: center;
 		gap: var(--spacing-lg);
 		flex-wrap: wrap;
-	}
-
-	.pfeile {
-		display: flex;
-		gap: var(--spacing-xs);
-	}
-
-	.pfeile[hidden] {
-		display: none;
-	}
-
-	.pfeil {
-		width: 44px;
-		height: 44px;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		border: 1px solid var(--color-text);
-		border-radius: 0;
-		background: transparent;
-		color: var(--color-text);
-		cursor: pointer;
-		transition: background-color 200ms ease, color 200ms ease, opacity 200ms ease;
-	}
-
-	.pfeil svg {
-		width: 18px;
-		height: 18px;
-		fill: none;
-		stroke: currentColor;
-		stroke-width: 1.5;
-	}
-
-	.pfeil:hover:not(:disabled) {
-		background: var(--color-text);
-		color: var(--color-bg);
-	}
-
-	.pfeil:disabled {
-		opacity: 0.3;
-		cursor: default;
 	}
 
 	.raster {
@@ -343,6 +280,66 @@ const laufband: string[] = ablauf.length > 0 ? ablauf.map((s: any) => s.title).f
 		scroll-behavior: smooth;
 		scrollbar-width: none;
 		overscroll-behavior-x: contain;
+	}
+
+	/* Mit der Maus ziehen (am Handy wischt man ohnehin) */
+	.raster.ziehbar {
+		cursor: grab;
+	}
+
+	.raster.zieht {
+		cursor: grabbing;
+		scroll-snap-type: none;
+		scroll-behavior: auto;
+		user-select: none;
+	}
+
+	.raster.zieht .kachel {
+		pointer-events: none;
+	}
+
+	.raster :global(img) {
+		-webkit-user-drag: none;
+		user-select: none;
+	}
+
+	/* Runder Hinweis «Ziehen», folgt der Maus über den Modellen */
+	.ziehen-hinweis {
+		position: fixed;
+		left: 0;
+		top: 0;
+		z-index: 50;
+		width: 92px;
+		height: 92px;
+		margin: -46px 0 0 -46px;
+		display: grid;
+		place-items: center;
+		border-radius: 50%;
+		background: rgb(255 255 255 / 0.92);
+		color: #1c1d1e;
+		font-size: 0.7rem;
+		font-weight: 500;
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		pointer-events: none;
+		opacity: 0;
+		transform: translate3d(var(--x, 0), var(--y, 0), 0) scale(0.4);
+		transition: opacity 250ms ease, transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.ziehen-hinweis.an {
+		opacity: 1;
+		transform: translate3d(var(--x, 0), var(--y, 0), 0) scale(1);
+	}
+
+	.ziehen-hinweis.druck {
+		transform: translate3d(var(--x, 0), var(--y, 0), 0) scale(0.8);
+	}
+
+	@media (hover: none), (pointer: coarse) {
+		.ziehen-hinweis {
+			display: none;
+		}
 	}
 
 	.raster::-webkit-scrollbar {
@@ -407,6 +404,22 @@ const laufband: string[] = ablauf.length > 0 ? ablauf.map((s: any) => s.title).f
 	.kachel-text h3 {
 		font-size: var(--font-size-2xl);
 		font-weight: 400;
+	}
+
+	/* Beim Darüberfahren erscheint ein Pfeil neben dem Namen */
+	.kachel-text h3::after {
+		content: "→";
+		display: inline-block;
+		margin-left: 0.4em;
+		opacity: 0;
+		transform: translateX(-10px);
+		transition: opacity 400ms ease, transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.kachel:hover .kachel-text h3::after,
+	.kachel:focus-visible .kachel-text h3::after {
+		opacity: 1;
+		transform: none;
 	}
 
 	.kachel-text p {
@@ -574,33 +587,114 @@ const laufband: string[] = ablauf.length > 0 ? ablauf.map((s: any) => s.title).f
 </style>
 
 <script>
-	// Karussell der Modelle: Pfeile blättern um ein Modell weiter.
-	// Pfeile erscheinen nur, wenn nicht alle Modelle gleichzeitig Platz haben.
+	// Karussell der Modelle: am Handy wischen, am PC mit der Maus ziehen
+	// (mit Schwung und Einrasten auf das nächste Modell) oder mit dem Trackpad.
 	function karussellStarten() {
 		const raster = document.querySelector<HTMLElement>("[data-karussell]");
-		const pfeile = document.querySelector<HTMLElement>("[data-pfeile]");
-		if (!raster || !pfeile) return;
-		const zurueck = pfeile.querySelector<HTMLButtonElement>("[data-zurueck]");
-		const weiter = pfeile.querySelector<HTMLButtonElement>("[data-weiter]");
-		if (!zurueck || !weiter) return;
+		if (!raster) return;
+		const reduziert = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+		const hinweis = document.createElement("div");
+		hinweis.className = "ziehen-hinweis";
+		hinweis.setAttribute("aria-hidden", "true");
+		hinweis.textContent = "Ziehen";
+		document.body.append(hinweis);
+
+		const kannBlaettern = () => raster.scrollWidth - raster.clientWidth > 2;
 		const schritt = () => {
 			const kachel = raster.querySelector<HTMLElement>(".kachel");
-			if (!kachel) return raster.clientWidth;
 			const abstand = parseFloat(getComputedStyle(raster).columnGap || "0") || 0;
-			return kachel.getBoundingClientRect().width + abstand;
+			return kachel ? kachel.getBoundingClientRect().width + abstand : raster.clientWidth;
 		};
-
 		const aktualisieren = () => {
-			const max = raster.scrollWidth - raster.clientWidth;
-			pfeile.hidden = max <= 2;
-			zurueck.disabled = raster.scrollLeft <= 2;
-			weiter.disabled = raster.scrollLeft >= max - 2;
+			raster.classList.toggle("ziehbar", kannBlaettern());
+			if (!kannBlaettern()) hinweis.classList.remove("an");
 		};
 
-		zurueck.addEventListener("click", () => raster.scrollBy({ left: -schritt() }));
-		weiter.addEventListener("click", () => raster.scrollBy({ left: schritt() }));
-		raster.addEventListener("scroll", aktualisieren, { passive: true });
+		let zieht = false;
+		let verschoben = false;
+		let startX = 0;
+		let startScroll = 0;
+		let letzteX = 0;
+		let letzteZeit = 0;
+		let tempo = 0;
+		let schwung = 0;
+
+		const einrasten = () => {
+			raster.classList.remove("zieht");
+			const max = raster.scrollWidth - raster.clientWidth;
+			const s = schritt();
+			const ziel = Math.min(max, Math.max(0, Math.round(raster.scrollLeft / s) * s));
+			raster.scrollTo({ left: ziel, behavior: reduziert ? "auto" : "smooth" });
+		};
+
+		raster.addEventListener("pointerdown", (e) => {
+			if (e.pointerType !== "mouse" || e.button !== 0 || !kannBlaettern()) return;
+			cancelAnimationFrame(schwung);
+			zieht = true;
+			verschoben = false;
+			startX = letzteX = e.clientX;
+			startScroll = raster.scrollLeft;
+			letzteZeit = performance.now();
+			tempo = 0;
+			hinweis.classList.add("druck");
+		});
+
+		window.addEventListener("pointermove", (e) => {
+			if (e.pointerType === "mouse") {
+				hinweis.style.setProperty("--x", `${e.clientX}px`);
+				hinweis.style.setProperty("--y", `${e.clientY}px`);
+			}
+			if (!zieht) return;
+			const dx = e.clientX - startX;
+			if (!verschoben && Math.abs(dx) > 5) {
+				verschoben = true;
+				raster.classList.add("zieht");
+			}
+			if (!verschoben) return;
+			raster.scrollLeft = startScroll - dx;
+			const jetzt = performance.now();
+			const dt = jetzt - letzteZeit;
+			if (dt > 0) tempo = 0.8 * ((e.clientX - letzteX) / dt) + 0.2 * tempo;
+			letzteX = e.clientX;
+			letzteZeit = jetzt;
+		});
+
+		window.addEventListener("pointerup", () => {
+			if (!zieht) return;
+			zieht = false;
+			hinweis.classList.remove("druck");
+			if (!verschoben) return;
+			// Schwung auslaufen lassen, dann auf das nächste Modell einrasten
+			let v = reduziert ? 0 : -tempo * 16;
+			const gleiten = () => {
+				v *= 0.92;
+				raster.scrollLeft += v;
+				if (Math.abs(v) > 0.6) schwung = requestAnimationFrame(gleiten);
+				else einrasten();
+			};
+			gleiten();
+		});
+
+		// Nach dem Ziehen nicht versehentlich ein Modell öffnen
+		raster.addEventListener(
+			"click",
+			(e) => {
+				if (verschoben) {
+					e.preventDefault();
+					e.stopPropagation();
+					verschoben = false;
+				}
+			},
+			true,
+		);
+		raster.addEventListener("dragstart", (e) => e.preventDefault());
+
+		raster.addEventListener("pointerenter", (e) => {
+			if (e.pointerType === "mouse" && kannBlaettern()) hinweis.classList.add("an");
+		});
+		raster.addEventListener("pointerleave", () => hinweis.classList.remove("an"));
+
 		window.addEventListener("resize", aktualisieren);
 		aktualisieren();
 	}

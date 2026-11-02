@@ -8,7 +8,7 @@
  * Läuft nur, wenn <html> die Klasse "bewegt" hat.
  */
 
-const ZIELE = "[data-reveal], [data-zeilen], [data-linie], [data-vorhang], [data-titelbild]";
+const ZIELE = "[data-reveal], [data-zeilen], [data-linie], [data-vorhang], [data-titelbild], [data-kachel]";
 
 function woerterTrennen(el: HTMLElement) {
 	if (el.dataset.getrennt) return;
