@@ -6,6 +6,7 @@ import { createPublicPageContext } from "emdash/page";
 import { Font } from "astro:assets";
 import "../styles/tokens.css";
 import "../styles/theme.css";
+import "../styles/animationen.css";
 
 interface Props {
 	title?: string;
@@ -105,6 +106,19 @@ const isLoggedIn = !!Astro.locals.user;
 					if (key && key.indexOf("ec-form:") === 0) sessionStorage.removeItem(key);
 				}
 			} catch (e) {}
+		</script>
+		<script is:inline>
+			// Animationen nur einschalten, wenn der Besucher keine reduzierte
+			// Bewegung eingestellt hat. Falls das Animations-Skript nicht startet,
+			// wird nach 3 Sekunden alles normal angezeigt.
+			(function () {
+				if (!window.matchMedia || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+				var r = document.documentElement;
+				r.classList.add("bewegt");
+				setTimeout(function () {
+					if (!r.classList.contains("anim-bereit")) r.classList.remove("bewegt");
+				}, 3000);
+			})();
 		</script>
 		<script is:inline>
 			// Apply an explicit theme choice immediately to prevent flash.
@@ -256,6 +270,11 @@ const isLoggedIn = !!Astro.locals.user;
 			document.querySelectorAll<HTMLTextAreaElement>(".ec-form textarea").forEach((feld) => {
 				if (!feld.value.trim()) feld.value = "";
 			});
+		</script>
+
+		<script>
+			import { animationenStarten } from "../lib/animationen";
+			animationenStarten();
 		</script>
 
 		<script>

@@ -1,0 +1,267 @@
+/*
+  animationen.css -- Bewegung beim Laden und Scrollen (Vorbild: maadprefab.ro).
+
+  Alles hier greift nur, wenn <html> die Klasse "bewegt" hat. Die setzt ein
+  kleines Skript im <head> (Base.astro), aber nur wenn der Besucher keine
+  reduzierte Bewegung eingestellt hat. Ohne Skript oder mit "Bewegung
+  reduzieren" bleibt die Seite ruhig und vollständig sichtbar.
+
+  Bausteine (Attribute im HTML):
+    data-reveal        Block gleitet beim Scrollen von unten ein
+    data-zeilen        Überschrift baut sich Wort für Wort von unten auf
+    data-linie         Trennlinie unter einem Titel zeichnet sich von links
+    data-vorhang       Bild wird von unten aufgedeckt und zoomt leicht zurück
+  Das Skript src/lib/animationen.ts setzt die Klasse "sichtbar", sobald ein
+  Element ins Bild kommt, und --i für die Staffelung.
+*/
+
+:root {
+	--anim-dauer: 900ms;
+	--anim-kurve: cubic-bezier(0.22, 1, 0.36, 1);
+	--anim-staffel: 90ms;
+}
+
+/* --- Einblenden von unten ------------------------------------------- */
+.bewegt [data-reveal] {
+	opacity: 0;
+	transform: translate3d(0, 48px, 0);
+	transition:
+		opacity var(--anim-dauer) var(--anim-kurve),
+		transform var(--anim-dauer) var(--anim-kurve);
+	transition-delay: calc(min(var(--i, 0), 4) * var(--anim-staffel));
+}
+
+.bewegt [data-reveal].sichtbar {
+	opacity: 1;
+	transform: none;
+}
+
+/* --- Überschrift Wort für Wort -------------------------------------- */
+.bewegt [data-zeilen] .wort {
+	display: inline-block;
+	overflow: hidden;
+	vertical-align: top;
+	/* Platz für Unterlängen (g, p), sonst werden sie abgeschnitten */
+	padding-bottom: 0.12em;
+	margin-bottom: -0.12em;
+}
+
+.bewegt [data-zeilen] .wort > span {
+	display: inline-block;
+	transform: translate3d(0, 110%, 0);
+	transition: transform 1000ms var(--anim-kurve);
+	transition-delay: calc(var(--w, 0) * 55ms + var(--start, 0ms));
+}
+
+.bewegt [data-zeilen].sichtbar .wort > span {
+	transform: none;
+}
+
+/* --- Trennlinie zeichnet sich --------------------------------------- */
+.bewegt [data-linie] {
+	position: relative;
+	border-bottom-color: transparent !important;
+}
+
+.bewegt [data-linie]::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: -1px;
+	height: 1px;
+	background: var(--color-border);
+	transform: scaleX(0);
+	transform-origin: left center;
+	transition: transform 1400ms var(--anim-kurve) 200ms;
+}
+
+.bewegt [data-linie].sichtbar::after {
+	transform: scaleX(1);
+}
+
+/* --- Bild-Vorhang ---------------------------------------------------- */
+.bewegt [data-vorhang] {
+	clip-path: inset(100% 0 0 0);
+	transition: clip-path 1200ms var(--anim-kurve);
+	transition-delay: calc(min(var(--i, 0), 3) * 120ms);
+}
+
+.bewegt [data-vorhang] > * {
+	transform: scale(1.18);
+	transition: transform 1600ms var(--anim-kurve);
+	transition-delay: calc(min(var(--i, 0), 3) * 120ms);
+}
+
+.bewegt [data-vorhang].sichtbar {
+	clip-path: inset(0 0 0 0);
+}
+
+.bewegt [data-vorhang].sichtbar > * {
+	transform: none;
+}
+
+/* --- Titelbild: langsamer Zoom beim Laden ---------------------------- */
+.bewegt [data-titelbild] img {
+	transform: scale(1.12);
+	transition: transform 2600ms var(--anim-kurve);
+}
+
+.bewegt [data-titelbild].sichtbar img {
+	transform: scale(1);
+}
+
+/* Parallax: Titelbild wandert beim Scrollen langsamer als die Seite.
+   Nur in Browsern mit scroll-gesteuerten Animationen (Chrome, Edge,
+   Safari ab 26); andere zeigen das Bild einfach ruhig. */
+@supports (animation-timeline: scroll()) {
+	/* Bild ragt oben über den Rand hinaus, damit beim Verschieben keine
+	   Lücke entsteht (der Bereich darüber wird abgeschnitten). */
+	.bewegt [data-parallax] {
+		top: -22vh;
+		animation: parallax linear both;
+		animation-timeline: scroll(root);
+		animation-range: 0 100vh;
+	}
+
+	@keyframes parallax {
+		to {
+			transform: translate3d(0, 22vh, 0);
+		}
+	}
+}
+
+/* --- Laufband -------------------------------------------------------- */
+.laufband {
+	overflow: hidden;
+	border-bottom: 1px solid var(--color-border);
+	padding: var(--spacing-lg) 0;
+	user-select: none;
+}
+
+.laufband-spur {
+	display: flex;
+	width: max-content;
+}
+
+.laufband-gruppe {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+}
+
+.laufband-gruppe span {
+	font-size: clamp(1.5rem, 3.4vw, 3rem);
+	font-weight: 300;
+	letter-spacing: -0.01em;
+	white-space: nowrap;
+	padding: 0 0.6em;
+}
+
+/* Trennzeichen: das Haus aus dem Logo, als kleines Quadrat angedeutet */
+.laufband-gruppe span::after {
+	content: "";
+	display: inline-block;
+	width: 0.28em;
+	height: 0.28em;
+	margin-left: 1.2em;
+	vertical-align: middle;
+	border: 1px solid currentColor;
+	transform: rotate(45deg);
+	opacity: 0.5;
+}
+
+.bewegt .laufband-spur {
+	animation: laufband 38s linear infinite;
+}
+
+.laufband:hover .laufband-spur {
+	animation-play-state: paused;
+}
+
+@keyframes laufband {
+	to {
+		transform: translate3d(-50%, 0, 0);
+	}
+}
+
+/* --- Rotierendes Abzeichen "Modelle ansehen" ------------------------ */
+.abzeichen {
+	position: absolute;
+	right: max(var(--spacing-lg), calc((100vw - var(--wide-width)) / 2 + var(--spacing-lg)));
+	bottom: clamp(8rem, 26vh, 14rem);
+	width: 132px;
+	height: 132px;
+	display: grid;
+	place-items: center;
+	color: #ffffff;
+	border-radius: 50%;
+	z-index: 2;
+}
+
+.abzeichen svg.ring {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	fill: currentColor;
+	font-size: 10.5px;
+	text-transform: uppercase;
+}
+
+.bewegt .abzeichen svg.ring {
+	animation: drehen 16s linear infinite;
+}
+
+.abzeichen .pfeil-runter {
+	width: 44px;
+	height: 44px;
+	display: grid;
+	place-items: center;
+	border: 1px solid rgb(255 255 255 / 0.7);
+	border-radius: 50%;
+	transition: background-color 300ms ease, color 300ms ease;
+}
+
+.abzeichen .pfeil-runter svg {
+	width: 16px;
+	height: 16px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.5;
+}
+
+.abzeichen:hover .pfeil-runter {
+	background: #ffffff;
+	color: #1c1d1e;
+}
+
+@keyframes drehen {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@media (max-width: 640px) {
+	.abzeichen {
+		display: none;
+	}
+}
+
+/* --- Footer wird aufgedeckt ------------------------------------------ */
+/* Die Seite gleitet am Ende über den Footer weg, der darunter stillsteht.
+   Nur auf grossen Bildschirmen, damit der Footer sicher ganz hineinpasst. */
+@media (min-width: 900px) and (min-height: 720px) {
+	.bewegt main {
+		position: relative;
+		z-index: 1;
+		background: var(--color-bg);
+		box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.25);
+	}
+
+	.bewegt .site-footer {
+		position: sticky;
+		bottom: 0;
+		z-index: 0;
+	}
+}

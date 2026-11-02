@@ -42,12 +42,16 @@ const fragen = await widgets("faq");
 const anzahl = haeuser.length;
 const heroBild = haeuser.find((h) => h.data.titelbild)?.data.titelbild;
 const teilenBild = bildUrl(heroBild, Astro.url.origin);
+
+// Laufband unter dem Titelbild: die Schritte aus "So funktioniert es"
+// (im Admin bearbeitbar), sonst der Slogan.
+const laufband: string[] = ablauf.length > 0 ? ablauf.map((s: any) => s.title).filter(Boolean) : [slogan];
 ---
 
 <Base title={titel} description={slogan} image={teilenBild}>
 	<section class:list={["hero", { "ohne-bild": !heroBild }]}>
 		{heroBild && (
-			<div class="hero-bild">
+			<div class="hero-bild" data-titelbild data-parallax>
 				{/* Sofort laden (nicht lazy), da es das erste sichtbare Bild ist */}
 				<img
 					src={teilenBild}
@@ -61,14 +65,39 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 			</div>
 		)}
 		<div class="hero-inhalt container">
-			<h1>{slogan}</h1>
+			<h1 data-zeilen style="--start: 250ms">{slogan}</h1>
 			{anzahl > 0 && (
-				<a href="#modelle" class:list={["btn", heroBild ? "btn-hell" : "btn-dunkel"]}>
+				<a href="#modelle" class:list={["btn", heroBild ? "btn-hell" : "btn-dunkel"]} data-reveal style="--i: 7">
 					Modelle ansehen
 				</a>
 			)}
 		</div>
+		{heroBild && anzahl > 0 && (
+			<a href="#modelle" class="abzeichen" aria-label="Zu den Modellen">
+				<svg class="ring" viewBox="0 0 132 132" aria-hidden="true">
+					<defs>
+						<path id="abzeichen-kreis" d="M66,66 m-52,0 a52,52 0 1,1 104,0 a52,52 0 1,1 -104,0" />
+					</defs>
+					<text>
+						<textPath href="#abzeichen-kreis" textLength="324" lengthAdjust="spacing">Modelle ansehen · Modelle ansehen · </textPath>
+					</text>
+				</svg>
+				<span class="pfeil-runter">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="5,9 12,16 19,9" /></svg>
+				</span>
+			</a>
+		)}
 	</section>
+
+	<div class="laufband" aria-hidden="true">
+		<div class="laufband-spur">
+			{[0, 1].map(() => (
+				<div class="laufband-gruppe">
+					{[...laufband, ...laufband].map((eintrag) => <span>{eintrag}</span>)}
+				</div>
+			))}
+		</div>
+	</div>
 
 	{
 		anzahl === 0 ? (
@@ -83,9 +112,9 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 			</section>
 		) : (
 			<section class="haeuser container" id="modelle">
-				<header class="haeuser-kopf">
-					<h2>Unsere Modelle</h2>
-					<div class="kopf-rechts">
+				<header class="haeuser-kopf" data-linie>
+					<h2 data-zeilen>Unsere Modelle</h2>
+					<div class="kopf-rechts" data-reveal style="--i: 2">
 						<p>{anzahl === 1 ? "Ein Modell" : `${anzahl} Modelle`}, Grundriss und Ausstattung anpassbar</p>
 						{/* Pfeile: werden per Skript nur angezeigt, wenn es mehr Modelle gibt als Platz */}
 						<div class="pfeile" data-pfeile hidden>
@@ -98,17 +127,17 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 						</div>
 					</div>
 				</header>
-				<div class="raster" data-karussell role="region" aria-label="Modelle" tabindex="0">
+				<div class="raster" data-karussell data-staffel role="region" aria-label="Modelle" tabindex="0">
 					{haeuser.map((haus) => (
 						<a href={`/modelle/${haus.id}`} class="kachel">
-							<div class="kachel-bild">
+							<div class="kachel-bild" data-vorhang>
 								{haus.data.titelbild ? (
 									<Image image={haus.data.titelbild} />
 								) : (
 									<span class="platzhalter">Noch kein Titelbild</span>
 								)}
 							</div>
-							<div class="kachel-text">
+							<div class="kachel-text" data-reveal style="--anim-staffel: 140ms">
 								<h3>{haus.data.title}</h3>
 								<p>
 									{[
@@ -131,10 +160,10 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 		ablauf.length > 0 && (
 			<section class="ablauf-bereich" aria-labelledby="ablauf-titel">
 				<div class="container">
-					<h2 id="ablauf-titel" class="bereich-titel">So funktioniert es</h2>
-					<ol class="ablauf">
+					<h2 id="ablauf-titel" class="bereich-titel" data-zeilen data-linie>So funktioniert es</h2>
+					<ol class="ablauf" data-staffel>
 						{ablauf.map((schritt: any) => (
-							<li>
+							<li data-reveal>
 								<h3>{schritt.title}</h3>
 								{schritt.content && <PortableText value={schritt.content} />}
 							</li>
@@ -148,16 +177,16 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 	{
 		fragen.length > 0 && (
 			<section class="faq-bereich container" aria-labelledby="faq-titel">
-				<h2 id="faq-titel" class="bereich-titel">Häufige Fragen</h2>
-				<div class="faq">
+				<h2 id="faq-titel" class="bereich-titel" data-zeilen data-linie>Häufige Fragen</h2>
+				<div class="faq" data-staffel>
 					{fragen.map((frage: any) => (
-						<details>
+						<details data-reveal>
 							<summary>{frage.title}</summary>
 							<div class="antwort">{frage.content && <PortableText value={frage.content} />}</div>
 						</details>
 					))}
 				</div>
-				<p class="faq-weiter">
+				<p class="faq-weiter" data-reveal>
 					Ihre Frage ist nicht dabei? <a href="/kontakt">Schreiben Sie uns.</a>
 				</p>
 			</section>
@@ -222,6 +251,13 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 		max-width: 15ch;
 		text-wrap: balance;
 		margin-bottom: var(--spacing-2xl);
+	}
+
+	/* Mit Animation: Schatten als Filter, sonst zeichnen die beim Einblenden
+	   abgeschnittenen Wörter kurz harte Schattenkanten */
+	:global(.bewegt) .hero h1 {
+		text-shadow: none;
+		filter: drop-shadow(0 2px 18px rgb(0 0 0 / 0.45)) drop-shadow(0 1px 2px rgb(0 0 0 / 0.3));
 	}
 
 	.haeuser {

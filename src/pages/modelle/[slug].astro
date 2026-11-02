@@ -57,7 +57,7 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 		<header class:list={["kopf", { "ohne-bild": !d.titelbild }]}>
 			{
 				d.titelbild && (
-					<div class="kopf-bild" {...haus.edit.titelbild}>
+					<div class="kopf-bild" data-titelbild {...haus.edit.titelbild}>
 						<img
 							src={teilenBild}
 							alt={d.titelbild.alt || d.title}
@@ -71,13 +71,13 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 				)
 			}
 			<div class="kopf-text container">
-				<p class="ort">Containerhaus</p>
-				<h1 {...haus.edit.title}>{d.title}</h1>
+				<p class="ort" data-reveal>Containerhaus</p>
+				<h1 data-reveal style="--i: 1" {...haus.edit.title}>{d.title}</h1>
 			</div>
 		</header>
 
 		<div class="inhalt container">
-			<div class="beschreibung" {...haus.edit.beschreibung}>
+			<div class="beschreibung" data-reveal {...haus.edit.beschreibung}>
 				<a href="/#modelle" class="zurueck">Alle Modelle</a>
 				{d.beschreibung ? <PortableText value={d.beschreibung} /> : null}
 				{ausstattung.length > 0 && (
@@ -90,7 +90,7 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 				)}
 			</div>
 
-			<aside class="seite">
+			<aside class="seite" data-reveal style="--i: 2">
 				{
 					eckdaten.length > 0 && (
 						<dl class="eckdaten">
@@ -110,10 +110,10 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 		{
 			galerie.length > 0 && (
 				<section class="galerie-bereich container" aria-label="Bildergalerie">
-					<h2>Galerie</h2>
-					<div class="galerie" {...haus.edit.galerie}>
+					<h2 data-zeilen>Galerie</h2>
+					<div class="galerie" data-staffel {...haus.edit.galerie}>
 						{galerie.map((row) => (
-							<button type="button" class="galerie-bild" aria-label="Bild groß anzeigen">
+							<button type="button" class="galerie-bild" data-vorhang aria-label="Bild groß anzeigen">
 								<Image image={row.bild} />
 							</button>
 						))}
@@ -124,10 +124,10 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 
 		<section class="anfrage-bereich container" id="anfrage" data-haus={d.title}>
 			<div class="anfrage-text">
-				<h2>Angebot anfragen</h2>
+				<h2 data-zeilen>Angebot anfragen</h2>
 				<p>Erzählen Sie uns kurz, wofür Sie das Haus nutzen möchten und wohin es geliefert werden soll. Wir melden uns so schnell wie möglich mit einem Angebot.</p>
 			</div>
-			<div class="anfrage-formular">
+			<div class="anfrage-formular" data-reveal style="--i: 1">
 				<Form id="kontakt" />
 			</div>
 		</section>
