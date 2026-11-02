@@ -45,7 +45,7 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 
 ---
 
-<Base title={titel} description={slogan} image={teilenBild}>
+<Base title={titel} description={slogan} image={teilenBild} ueberBild={!!heroBild}>
 	<section class:list={["hero", { "ohne-bild": !heroBild }]}>
 		{heroBild && (
 			<div class="hero-bild" data-titelbild data-parallax>
@@ -136,7 +136,7 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 
 	{
 		ablauf.length > 0 && (
-			<section class="ablauf-bereich" aria-labelledby="ablauf-titel">
+			<section class="ablauf-bereich" id="ablauf" aria-labelledby="ablauf-titel">
 				<div class="container">
 					<h2 id="ablauf-titel" class="bereich-titel" data-zeilen data-linie>So funktioniert es</h2>
 					<ol class="ablauf" data-staffel>
@@ -154,7 +154,7 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 
 	{
 		fragen.length > 0 && (
-			<section class="faq-bereich container" aria-labelledby="faq-titel">
+			<section class="faq-bereich container" id="fragen" aria-labelledby="faq-titel">
 				<h2 id="faq-titel" class="bereich-titel" data-zeilen data-linie>Häufige Fragen</h2>
 				<div class="faq" data-staffel>
 					{fragen.map((frage: any) => (

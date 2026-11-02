@@ -52,6 +52,7 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 	image={seo.ogImage || teilenBild}
 	canonical={seo.canonical}
 	content={{ collection: "hauser", id: d.id, slug: haus.id }}
+	ueberBild={!!d.titelbild}
 >
 	<article>
 		<header class:list={["kopf", { "ohne-bild": !d.titelbild }]}>
