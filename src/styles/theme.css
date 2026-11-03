@@ -9,12 +9,7 @@
   Schnitte für grosse Titel, Grossbuchstaben nur für Buttons und Logo.
 */
 
-/*
-  Farben ohne light-dark(): Der Build wandelt light-dark() in eine
-  Variante um, die nur auf die Systemeinstellung reagiert. Mit den
-  folgenden drei Blöcken funktioniert auch der Hell/Dunkel-Umschalter
-  im Footer (Klasse .light / .dark auf <html>).
-*/
+/* Nur helles Design: kein Dunkel-Modus, auch wenn das Gerät dunkel eingestellt ist. */
 :root {
 	color-scheme: light;
 	--color-bg: #ffffff;
@@ -54,39 +49,6 @@
 	--wide-width: 1320px;
 }
 
-@media (prefers-color-scheme: dark) {
-	:root:not(.light) {
-		color-scheme: dark;
-		--color-bg: #151617;
-		--color-surface: #1f2021;
-		--color-text: #ececea;
-		--color-muted: #9b9c9d;
-		--color-border: #2f3031;
-		--color-brand: #ececea;
-		--color-brand-strong: #ffffff;
-		--color-brand-soft: #c9c9c7;
-		--color-accent: #ececea;
-		--color-accent-soft: #c9c9c7;
-		--color-on-brand: #151617;
-		--color-danger: #f87171;
-	}
-}
-
-:root.dark {
-	color-scheme: dark;
-	--color-bg: #151617;
-	--color-surface: #1f2021;
-	--color-text: #ececea;
-	--color-muted: #9b9c9d;
-	--color-border: #2f3031;
-	--color-brand: #ececea;
-	--color-brand-strong: #ffffff;
-	--color-brand-soft: #c9c9c7;
-	--color-accent: #ececea;
-	--color-accent-soft: #c9c9c7;
-	--color-on-brand: #151617;
-	--color-danger: #f87171;
-}
 
 /* Buttons: eckig, Grossbuchstaben, gesperrt */
 .btn {
