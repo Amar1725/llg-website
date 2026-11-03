@@ -160,7 +160,9 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 					{fragen.map((frage: any) => (
 						<details data-reveal>
 							<summary>{frage.title}</summary>
-							<div class="antwort">{frage.content && <PortableText value={frage.content} />}</div>
+							<div class="antwort-huelle">
+									<div class="antwort">{frage.content && <PortableText value={frage.content} />}</div>
+								</div>
 						</details>
 					))}
 				</div>
@@ -529,25 +531,47 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 		padding: var(--spacing-lg) 2.5rem var(--spacing-lg) 0;
 		font-size: var(--font-size-lg);
 		position: relative;
+		transition: padding-left 400ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.faq summary:hover {
+		padding-left: 0.5rem;
 	}
 
 	.faq summary::-webkit-details-marker {
 		display: none;
 	}
 
+	/* Plus aus zwei Strichen: beim Öffnen dreht sich der senkrechte Strich
+	   flach, aus dem Plus wird ein Minus */
+	.faq summary::before,
 	.faq summary::after {
-		content: "+";
+		content: "";
 		position: absolute;
-		right: 0.25rem;
+		right: 0.35rem;
 		top: 50%;
-		transform: translateY(-50%);
-		font-size: 1.5rem;
-		font-weight: 300;
-		color: var(--color-muted);
+		width: 16px;
+		height: 1.5px;
+		margin-top: -0.75px;
+		background: var(--color-text);
+		transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
-	.faq details[open] summary::after {
-		content: "–";
+	.faq summary::after {
+		transform: rotate(90deg);
+	}
+
+	.faq details.offen summary::after {
+		transform: rotate(180deg);
+	}
+
+	.faq details.offen summary::before {
+		transform: rotate(180deg);
+	}
+
+	/* Hülle für die Aufklapp-Animation (Höhe wird vom Skript animiert) */
+	.antwort-huelle {
+		overflow: hidden;
 	}
 
 	.antwort {
@@ -729,4 +753,55 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 	}
 
 	karussellStarten();
+
+	// Häufige Fragen: Antworten weich auf- und zuklappen statt springen.
+	function faqStarten() {
+		const reduziert = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		const kurve = "cubic-bezier(0.22, 1, 0.36, 1)";
+
+		document.querySelectorAll<HTMLDetailsElement>(".faq details").forEach((frage) => {
+			const kopf = frage.querySelector("summary");
+			const huelle = frage.querySelector<HTMLElement>(".antwort-huelle");
+			const antwort = frage.querySelector<HTMLElement>(".antwort");
+			if (!kopf || !huelle || !antwort) return;
+			let laeuft: Animation | null = null;
+			frage.classList.toggle("offen", frage.open);
+
+			kopf.addEventListener("click", (e) => {
+				if (reduziert) {
+					// Ohne Animation: nur das Symbol mitschalten
+					requestAnimationFrame(() => frage.classList.toggle("offen", frage.open));
+					return;
+				}
+				e.preventDefault();
+				laeuft?.cancel();
+
+				if (!frage.open || laeuft?.id === "zu") {
+					// Öffnen
+					frage.open = true;
+					frage.classList.add("offen");
+					const ziel = huelle.scrollHeight;
+					laeuft = huelle.animate({ height: [`${huelle.offsetHeight}px`, `${ziel}px`] }, { duration: 550, easing: kurve });
+					laeuft.id = "auf";
+					antwort.animate(
+						{ opacity: [0, 1], transform: ["translateY(-10px)", "none"] },
+						{ duration: 500, delay: 120, easing: kurve, fill: "backwards" },
+					);
+					laeuft.onfinish = () => (laeuft = null);
+				} else {
+					// Schliessen
+					frage.classList.remove("offen");
+					laeuft = huelle.animate({ height: [`${huelle.offsetHeight}px`, "0px"] }, { duration: 420, easing: kurve });
+					laeuft.id = "zu";
+					antwort.animate({ opacity: [1, 0] }, { duration: 250, easing: "ease" });
+					laeuft.onfinish = () => {
+						frage.open = false;
+						laeuft = null;
+					};
+				}
+			});
+		});
+	}
+
+	faqStarten();
 </script>
