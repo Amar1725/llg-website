@@ -81,3 +81,35 @@ export function animationenStarten() {
 	fuer.forEach((_, el) => beobachter.observe(el));
 	root.classList.add("anim-bereit");
 }
+
+/**
+ * Kontaktformular: Erscheint die Erfolgsmeldung des Formular-Plugins, wird
+ * davor ein Häkchen eingesetzt, das sich zeichnet (CSS in animationen.css).
+ * Läuft immer, auch ohne Animationen (dann steht das Häkchen einfach da).
+ */
+export function formularErfolgStarten() {
+	const SVG =
+		'<svg class="erfolg-haken" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="20" /><polyline points="13,23 19.5,29 31,16" /></svg>';
+	// Das Plugin schreibt beim Senden "Submitting..." und danach "Submit" auf den
+	// Knopf (englisch, und der eigene Text geht verloren). Hier auf Deutsch halten.
+	document.querySelectorAll<HTMLButtonElement>(".ec-form-submit").forEach((knopf) => {
+		const original = knopf.textContent?.trim() || "Senden";
+		new MutationObserver(() => {
+			const jetzt = knopf.textContent?.trim();
+			if (jetzt === "Submitting...") knopf.textContent = "Wird gesendet …";
+			else if (jetzt === "Submit") knopf.textContent = original;
+		}).observe(knopf, { childList: true, characterData: true, subtree: true });
+	});
+
+	document.querySelectorAll<HTMLElement>("[data-form-status]").forEach((status) => {
+		new MutationObserver(() => {
+			if (!status.classList.contains("ec-form-status--success")) return;
+			if (status.querySelector(".erfolg-haken")) return;
+			const text = document.createElement("span");
+			text.textContent = status.textContent ?? "";
+			status.textContent = "";
+			status.insertAdjacentHTML("afterbegin", SVG);
+			status.append(text);
+		}).observe(status, { attributes: true, attributeFilter: ["class"], childList: true });
+	});
+}

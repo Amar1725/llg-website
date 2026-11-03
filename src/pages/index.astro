@@ -108,7 +108,7 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 				<div class="raster" data-karussell data-staffel role="region" aria-label="Modelle" tabindex="0">
 					{haeuser.map((haus) => (
 						<a href={`/modelle/${haus.id}`} class="kachel" data-kachel>
-							<div class="kachel-bild">
+							<div class="kachel-bild" style={`view-transition-name: modell-${haus.id}`}>
 								{haus.data.titelbild ? (
 									<Image image={haus.data.titelbild} />
 								) : (
@@ -139,7 +139,7 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 			<section class="ablauf-bereich" id="ablauf" aria-labelledby="ablauf-titel">
 				<div class="container">
 					<h2 id="ablauf-titel" class="bereich-titel" data-zeilen data-linie>So funktioniert es</h2>
-					<ol class="ablauf" data-staffel>
+					<ol class="ablauf" data-staffel data-zeitstrahl style={`--n: ${ablauf.length}`}>
 						{ablauf.map((schritt: any) => (
 							<li data-reveal>
 								<h3>{schritt.title}</h3>
@@ -483,6 +483,111 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 
 	.ablauf li {
 		counter-increment: schritt;
+		position: relative;
+	}
+
+	/* --- Zeitstrahl (Skript setzt .zeitstrahl, --fortschritt und .aktiv) --- */
+	.ablauf.zeitstrahl {
+		position: relative;
+	}
+
+	/* Schiene und Fortschritt */
+	.ablauf.zeitstrahl::before,
+	.ablauf.zeitstrahl::after {
+		content: "";
+		position: absolute;
+		left: var(--start-x, 0);
+		top: var(--start-y, 0);
+		background: var(--color-border);
+	}
+
+	.ablauf.zeitstrahl::after {
+		background: var(--color-text);
+		transition: transform 200ms linear;
+	}
+
+	/* Punkt auf der Linie für jeden Schritt */
+	.ablauf.zeitstrahl li::after {
+		content: "";
+		position: absolute;
+		width: 13px;
+		height: 13px;
+		border-radius: 50%;
+		border: 1.5px solid var(--color-muted);
+		background: var(--color-surface);
+		transition:
+			background-color 400ms ease,
+			border-color 400ms ease,
+			transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+	}
+
+	.ablauf.zeitstrahl li.aktiv::after {
+		background: var(--color-text);
+		border-color: var(--color-text);
+		transform: scale(1.25);
+	}
+
+	.ablauf.zeitstrahl li::before {
+		transition: color 500ms ease;
+	}
+
+	.ablauf.zeitstrahl li.aktiv::before {
+		color: var(--color-text);
+	}
+
+	/* Breit: Schritte nebeneinander, Linie waagrecht über den Nummern */
+	@media (min-width: 901px) {
+		.ablauf.zeitstrahl {
+			grid-template-columns: repeat(var(--n, 4), 1fr);
+		}
+
+		.ablauf.zeitstrahl li {
+			padding-top: 2.75rem;
+		}
+
+		.ablauf.zeitstrahl li::after {
+			left: 0;
+			top: 0;
+		}
+
+		.ablauf.zeitstrahl::before,
+		.ablauf.zeitstrahl::after {
+			width: var(--laenge, 0);
+			height: 1.5px;
+			margin-top: 5.75px;
+			margin-left: 6px;
+		}
+
+		.ablauf.zeitstrahl::after {
+			transform-origin: left center;
+			transform: scaleX(var(--fortschritt, 0));
+		}
+	}
+
+	/* Schmal: Schritte untereinander, Linie senkrecht links */
+	@media (max-width: 900px) {
+		.ablauf.zeitstrahl {
+			grid-template-columns: 1fr;
+			padding-left: 2.75rem;
+		}
+
+		.ablauf.zeitstrahl li::after {
+			left: -2.75rem;
+			top: 1rem;
+		}
+
+		.ablauf.zeitstrahl::before,
+		.ablauf.zeitstrahl::after {
+			width: 1.5px;
+			height: var(--laenge, 0);
+			margin-left: 5.75px;
+			margin-top: 6px;
+		}
+
+		.ablauf.zeitstrahl::after {
+			transform-origin: center top;
+			transform: scaleY(var(--fortschritt, 0));
+		}
 	}
 
 	/* Die Nummer zeigt die Reihenfolge der Schritte */
@@ -731,6 +836,9 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 					e.preventDefault();
 					e.stopPropagation();
 					verschoben = false;
+				} else {
+					// Modell wird geöffnet: Hinweis ausblenden, damit er nicht im Übergang hängt
+					hinweis.classList.remove("an");
 				}
 			},
 			true,
@@ -804,4 +912,64 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 	}
 
 	faqStarten();
+
+	// "So funktioniert es" als Zeitstrahl: die Linie zeichnet sich beim
+	// Scrollen von Schritt zu Schritt, erreichte Schritte werden hervorgehoben.
+	function zeitstrahlStarten() {
+		const liste = document.querySelector<HTMLElement>("[data-zeitstrahl]");
+		if (!liste) return;
+		const schritte = Array.from(liste.querySelectorAll<HTMLElement>(":scope > li"));
+		if (schritte.length < 2) return;
+		liste.classList.add("zeitstrahl");
+		const reduziert = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		const waagrecht = () => window.matchMedia("(min-width: 901px)").matches;
+		let geplant = false;
+
+		// Länge der Linie: vom ersten bis zum letzten Punkt
+		const vermessen = () => {
+			const a = schritte[0].getBoundingClientRect();
+			const z = schritte[schritte.length - 1].getBoundingClientRect();
+			const laenge = waagrecht() ? z.left - a.left : z.top - a.top;
+			liste.style.setProperty("--laenge", `${laenge}px`);
+			liste.style.setProperty("--start-x", waagrecht() ? "0px" : "0px");
+			liste.style.setProperty("--start-y", waagrecht() ? "0px" : "1rem");
+		};
+
+		const zeichnen = () => {
+			geplant = false;
+			const r = liste.getBoundingClientRect();
+			const vh = window.innerHeight;
+			let p: number;
+			if (reduziert) {
+				p = 1;
+			} else if (waagrecht()) {
+				// Beginnt, wenn die Liste bei 85 % der Fensterhöhe ist, fertig bei 30 %
+				p = (vh * 0.85 - r.top) / (vh * 0.55);
+			} else {
+				// Senkrecht: die Linie folgt der Fenstermitte
+				const a = schritte[0].getBoundingClientRect().top;
+				const z = schritte[schritte.length - 1].getBoundingClientRect().top;
+				p = (vh * 0.6 - a) / Math.max(1, z - a);
+			}
+			p = Math.min(1, Math.max(0, p));
+			liste.style.setProperty("--fortschritt", p.toFixed(4));
+			schritte.forEach((li, i) => li.classList.toggle("aktiv", p >= i / (schritte.length - 1) - 0.001 && p > 0));
+		};
+
+		const planen = () => {
+			if (geplant) return;
+			geplant = true;
+			requestAnimationFrame(zeichnen);
+		};
+
+		vermessen();
+		zeichnen();
+		window.addEventListener("scroll", planen, { passive: true });
+		window.addEventListener("resize", () => {
+			vermessen();
+			planen();
+		});
+	}
+
+	zeitstrahlStarten();
 </script>

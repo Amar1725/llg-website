@@ -31,14 +31,15 @@ const teilenText = [eckdatenKurz, kurzText(d.beschreibung, 150)].filter(Boolean)
 const teilenBild = bildUrl(d.titelbild, Astro.url.origin);
 const galerie: any[] = Array.isArray(d.galerie) ? d.galerie.filter((row: any) => row?.bild) : [];
 
+// "zaehlen": Zahl, die beim Einblenden von 0 hochzählt (siehe Skript unten)
 const eckdaten = [
-	d.wohnflaeche != null && { label: "Wohnfläche", wert: `${zahl.format(d.wohnflaeche)} m²` },
+	d.wohnflaeche != null && { label: "Wohnfläche", wert: `${zahl.format(d.wohnflaeche)} m²`, zaehlen: d.wohnflaeche, einheit: " m²" },
 	d.masse && { label: "Maße (L × B × H)", wert: d.masse },
-	d.module != null && { label: "Container", wert: String(d.module) },
-	d.zimmer != null && { label: "Zimmer", wert: zahl.format(d.zimmer) },
-	d.baeder != null && { label: "Bäder", wert: String(d.baeder) },
+	d.module != null && { label: "Container", wert: String(d.module), zaehlen: d.module },
+	d.zimmer != null && { label: "Zimmer", wert: zahl.format(d.zimmer), zaehlen: d.zimmer },
+	d.baeder != null && { label: "Bäder", wert: String(d.baeder), zaehlen: d.baeder },
 	d.lieferzeit && { label: "Lieferzeit", wert: d.lieferzeit },
-].filter(Boolean) as { label: string; wert: string }[];
+].filter(Boolean) as { label: string; wert: string; zaehlen?: number; einheit?: string }[];
 
 // Ausstattung: eine Zeile im Admin = ein Punkt in der Liste
 const ausstattung: string[] = typeof d.ausstattung === "string"
@@ -58,7 +59,7 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 		<header class:list={["kopf", { "ohne-bild": !d.titelbild }]}>
 			{
 				d.titelbild && (
-					<div class="kopf-bild" data-titelbild {...haus.edit.titelbild}>
+					<div class="kopf-bild" data-titelbild style={`view-transition-name: modell-${haus.id}`} {...haus.edit.titelbild}>
 						<img
 							src={teilenBild}
 							alt={d.titelbild.alt || d.title}
@@ -98,7 +99,7 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 							{eckdaten.map((e) => (
 								<div>
 									<dt>{e.label}</dt>
-									<dd>{e.wert}</dd>
+									<dd data-zaehlen={e.zaehlen} data-einheit={e.einheit}>{e.wert}</dd>
 								</div>
 							))}
 						</dl>
@@ -135,23 +136,217 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 	</article>
 
 	<dialog class="lightbox" aria-label="Bildansicht">
-		<img alt="" />
+		<div class="lb-buehne">
+			<img class="lb-bild" alt="" draggable="false" />
+		</div>
 		<button type="button" class="schliessen" aria-label="Schließen">✕</button>
+		<button type="button" class="lb-pfeil lb-zurueck" aria-label="Vorheriges Bild">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15,5 8,12 15,19" /></svg>
+		</button>
+		<button type="button" class="lb-pfeil lb-weiter" aria-label="Nächstes Bild">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9,5 16,12 9,19" /></svg>
+		</button>
+		<p class="lb-zaehler" aria-live="polite"></p>
 	</dialog>
 
 	<script>
+		// Galerie: Bild öffnet sich aus seinem Vorschaubild heraus, in der
+		// Grossansicht wischen (Handy), ziehen (Maus) oder Pfeiltasten.
 		const dialog = document.querySelector<HTMLDialogElement>(".lightbox");
-		const grossesBild = dialog?.querySelector("img");
-		document.querySelectorAll<HTMLButtonElement>(".galerie-bild").forEach((btn) => {
-			btn.addEventListener("click", () => {
-				const img = btn.querySelector("img");
-				if (!dialog || !grossesBild || !img) return;
-				grossesBild.src = img.currentSrc || img.src;
-				grossesBild.alt = img.alt;
+		const buehne = dialog?.querySelector<HTMLElement>(".lb-buehne");
+		const gross = dialog?.querySelector<HTMLImageElement>(".lb-bild");
+		const zaehler = dialog?.querySelector<HTMLElement>(".lb-zaehler");
+		const knoepfe = Array.from(document.querySelectorAll<HTMLButtonElement>(".galerie-bild"));
+		if (dialog && buehne && gross && zaehler && knoepfe.length) {
+			const reduziert = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+			const kurve = "cubic-bezier(0.22, 1, 0.36, 1)";
+			const mehrere = knoepfe.length > 1;
+			dialog.classList.toggle("lb-mehrere", mehrere);
+			let aktuell = 0;
+			let beschaeftigt = false;
+
+			const vorschau = (i: number) => knoepfe[i].querySelector("img");
+			const setzen = (i: number) => {
+				aktuell = (i + knoepfe.length) % knoepfe.length;
+				const img = vorschau(aktuell);
+				if (!img) return;
+				gross.src = img.currentSrc || img.src;
+				gross.alt = img.alt;
+				zaehler.textContent = `${aktuell + 1} / ${knoepfe.length}`;
+			};
+
+			// Verschiebung + Skalierung vom Vorschaubild zur Grossansicht
+			const vonVorschau = () => {
+				const a = knoepfe[aktuell].getBoundingClientRect();
+				const z = gross.getBoundingClientRect();
+				if (!z.width || !a.width) return "scale(0.9)";
+				const dx = a.left + a.width / 2 - (z.left + z.width / 2);
+				const dy = a.top + a.height / 2 - (z.top + z.height / 2);
+				return `translate(${dx}px, ${dy}px) scale(${a.width / z.width}, ${a.height / z.height})`;
+			};
+
+			const oeffnen = async (i: number) => {
+				setzen(i);
 				dialog.showModal();
+				try {
+					await gross.decode();
+				} catch {}
+				dialog.classList.add("offen");
+				if (reduziert) return;
+				knoepfe[aktuell].style.visibility = "hidden";
+				const anim = gross.animate({ transform: [vonVorschau(), "none"] }, { duration: 650, easing: kurve });
+				anim.onfinish = () => (knoepfe[aktuell].style.visibility = "");
+			};
+
+			const schliessen = () => {
+				if (!dialog.open || beschaeftigt) return;
+				dialog.classList.remove("offen");
+				if (reduziert) return dialog.close();
+				beschaeftigt = true;
+				const knopf = knoepfe[aktuell];
+				const r = knopf.getBoundingClientRect();
+				const sichtbar = r.bottom > 0 && r.top < window.innerHeight;
+				const ziel = sichtbar ? vonVorschau() : "scale(0.85)";
+				const anim = gross.animate(
+					{ transform: ["none", ziel], opacity: sichtbar ? [1, 1] : [1, 0] },
+					{ duration: 500, easing: kurve, fill: "forwards" },
+				);
+				if (sichtbar) knopf.style.visibility = "hidden";
+				anim.onfinish = () => {
+					knopf.style.visibility = "";
+					dialog.close();
+					anim.cancel();
+					beschaeftigt = false;
+				};
+			};
+
+			// Zum nächsten/vorherigen Bild gleiten (richtung: 1 = weiter, -1 = zurück)
+			const wechseln = async (richtung: number, schonVerschoben = 0) => {
+				if (!mehrere || beschaeftigt) return;
+				beschaeftigt = true;
+				const breite = window.innerWidth;
+				if (!reduziert) {
+					await gross.animate(
+						{ transform: [`translateX(${schonVerschoben}px)`, `translateX(${-richtung * breite * 0.6}px)`], opacity: [1, 0] },
+						{ duration: 280, easing: "ease-in", fill: "forwards" },
+					).finished;
+				}
+				setzen(aktuell + richtung);
+				try {
+					await gross.decode();
+				} catch {}
+				gross.getAnimations().forEach((a) => a.cancel());
+				if (!reduziert) {
+					await gross.animate(
+						{ transform: [`translateX(${richtung * breite * 0.6}px)`, "none"], opacity: [0, 1] },
+						{ duration: 450, easing: kurve },
+					).finished;
+				}
+				beschaeftigt = false;
+			};
+
+			knoepfe.forEach((knopf, i) => knopf.addEventListener("click", () => oeffnen(i)));
+			dialog.querySelector(".schliessen")?.addEventListener("click", (e) => {
+				e.stopPropagation();
+				schliessen();
 			});
-		});
-		dialog?.addEventListener("click", () => dialog.close());
+			dialog.querySelector(".lb-zurueck")?.addEventListener("click", (e) => {
+				e.stopPropagation();
+				wechseln(-1);
+			});
+			dialog.querySelector(".lb-weiter")?.addEventListener("click", (e) => {
+				e.stopPropagation();
+				wechseln(1);
+			});
+			// Esc: mit Animation schliessen statt sofort
+			dialog.addEventListener("cancel", (e) => {
+				e.preventDefault();
+				schliessen();
+			});
+			dialog.addEventListener("keydown", (e) => {
+				if (e.key === "ArrowRight") wechseln(1);
+				if (e.key === "ArrowLeft") wechseln(-1);
+			});
+
+			// Wischen / Ziehen
+			let startX = 0;
+			let dx = 0;
+			let zieht = false;
+			buehne.addEventListener("pointerdown", (e) => {
+				if (!mehrere || beschaeftigt) return;
+				zieht = true;
+				startX = e.clientX;
+				dx = 0;
+				buehne.setPointerCapture(e.pointerId);
+			});
+			buehne.addEventListener("pointermove", (e) => {
+				if (!zieht) return;
+				dx = e.clientX - startX;
+				gross.style.transform = `translateX(${dx}px)`;
+			});
+			const loslassen = () => {
+				if (!zieht) return;
+				zieht = false;
+				const verschoben = dx;
+				gross.style.transform = "";
+				if (Math.abs(verschoben) > 70) {
+					wechseln(verschoben < 0 ? 1 : -1, verschoben);
+				} else if (Math.abs(verschoben) > 3) {
+					gross.animate({ transform: [`translateX(${verschoben}px)`, "none"] }, { duration: 350, easing: kurve });
+				}
+			};
+			buehne.addEventListener("pointerup", loslassen);
+			buehne.addEventListener("pointercancel", loslassen);
+
+			// Klick (ohne Ziehen) neben das Bild schliesst
+			dialog.addEventListener("click", (e) => {
+				if (Math.abs(dx) > 3) {
+					dx = 0;
+					return;
+				}
+				if (e.target === gross && mehrere) return;
+				schliessen();
+			});
+		}
+
+		// Eckdaten zählen beim ersten Einblenden von 0 auf ihren Wert hoch
+		if (document.documentElement.classList.contains("bewegt")) {
+			const zahlFormat = new Intl.NumberFormat("de-DE", { maximumFractionDigits: 1 });
+			const felder = Array.from(document.querySelectorAll<HTMLElement>("[data-zaehlen]")).filter(
+				(el) => Number.isFinite(Number(el.dataset.zaehlen)) && Number(el.dataset.zaehlen) > 0,
+			);
+			const anzeigen = (el: HTMLElement, wert: number) => {
+				const ziel = Number(el.dataset.zaehlen);
+				const dezimal = !Number.isInteger(ziel);
+				const zahl = dezimal ? Math.round(wert * 10) / 10 : Math.round(wert);
+				el.textContent = zahlFormat.format(zahl) + (el.dataset.einheit ?? "");
+			};
+			felder.forEach((el) => anzeigen(el, 0));
+			const zaehlen = (el: HTMLElement, verzoegerung: number) => {
+				const ziel = Number(el.dataset.zaehlen);
+				// grössere Zahlen dürfen etwas länger laufen
+				const dauer = Math.min(1800, 900 + ziel * 6);
+				let start = 0;
+				const schritt = (t: number) => {
+					if (!start) start = t;
+					const f = Math.min(1, (t - start) / dauer);
+					const weich = 1 - Math.pow(1 - f, 4);
+					anzeigen(el, ziel * weich);
+					if (f < 1) requestAnimationFrame(schritt);
+				};
+				setTimeout(() => requestAnimationFrame(schritt), verzoegerung);
+			};
+			const beobachter = new IntersectionObserver(
+				(eintraege) => {
+					if (!eintraege.some((e) => e.isIntersecting)) return;
+					beobachter.disconnect();
+					felder.forEach((el, i) => zaehlen(el, 350 + i * 120));
+				},
+				{ threshold: 0.3 },
+			);
+			const box = document.querySelector(".eckdaten");
+			if (box && felder.length) beobachter.observe(box);
+		}
 
 		// Modellname automatisch ins Feld "haus" (Modell) des Formulars schreiben
 		const bereich = document.querySelector<HTMLElement>("#anfrage");
@@ -353,24 +548,63 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 		transform: scale(1.04);
 	}
 
+	/* Grossansicht der Galerie: Vollbild, Hintergrund blendet weich ein */
 	.lightbox {
-		margin: auto;
+		width: 100vw;
+		height: 100dvh;
+		max-width: none;
+		max-height: none;
+		margin: 0;
 		padding: 0;
 		border: none;
 		background: transparent;
-		max-width: 95vw;
-		max-height: 95vh;
+		overflow: hidden;
 		cursor: zoom-out;
 	}
 
 	.lightbox::backdrop {
-		background: rgb(10 10 10 / 0.92);
+		background: rgb(10 10 10 / 0.94);
+		opacity: 0;
+		transition: opacity 450ms ease;
 	}
 
-	.lightbox img {
-		max-width: 95vw;
-		max-height: 90vh;
+	.lightbox.offen::backdrop {
+		opacity: 1;
+	}
+
+	.lb-buehne {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		padding: 4.5rem 1rem;
+		touch-action: pan-y;
+	}
+
+	.lightbox.lb-mehrere .lb-buehne {
+		cursor: grab;
+	}
+
+	.lb-bild {
+		max-width: min(1400px, 100%);
+		max-height: 100%;
 		object-fit: contain;
+		user-select: none;
+		-webkit-user-drag: none;
+		will-change: transform;
+	}
+
+	.schliessen,
+	.lb-pfeil,
+	.lb-zaehler {
+		opacity: 0;
+		transition: opacity 400ms ease 150ms, background-color 250ms ease, color 250ms ease;
+	}
+
+	.lightbox.offen .schliessen,
+	.lightbox.offen .lb-pfeil,
+	.lightbox.offen .lb-zaehler {
+		opacity: 1;
 	}
 
 	.schliessen {
@@ -384,6 +618,68 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 		color: white;
 		font-size: 1.1rem;
 		cursor: pointer;
+	}
+
+	.lb-pfeil {
+		position: fixed;
+		top: 50%;
+		width: 52px;
+		height: 52px;
+		margin-top: -26px;
+		display: none;
+		place-items: center;
+		border: 1px solid rgb(255 255 255 / 0.4);
+		border-radius: 50%;
+		background: transparent;
+		color: #ffffff;
+		cursor: pointer;
+	}
+
+	.lightbox.lb-mehrere .lb-pfeil {
+		display: grid;
+	}
+
+	.lb-pfeil:hover {
+		background: #ffffff;
+		color: #1c1d1e;
+	}
+
+	.lb-pfeil svg {
+		width: 20px;
+		height: 20px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.5;
+	}
+
+	.lb-zurueck {
+		left: 20px;
+	}
+
+	.lb-weiter {
+		right: 20px;
+	}
+
+	.lb-zaehler {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 22px;
+		display: none;
+		text-align: center;
+		color: rgb(255 255 255 / 0.7);
+		font-size: var(--font-size-sm);
+		letter-spacing: 0.2em;
+	}
+
+	.lightbox.lb-mehrere .lb-zaehler {
+		display: block;
+	}
+
+	@media (max-width: 640px) {
+		.lb-pfeil {
+			display: none !important;
+		}
 	}
 
 	.anfrage-bereich {

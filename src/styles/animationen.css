@@ -251,3 +251,155 @@
 		z-index: 0;
 	}
 }
+
+/* --- Seitenübergang: Modell-Bild wächst zur Modellseite -------------- */
+/* Browser mit View Transitions (Chrome, Edge, Safari ab 18.2) blenden
+   beim Seitenwechsel weich über; das Bild eines Modells (gleicher
+   view-transition-name auf Kachel und Titelbild) wächst dabei an seinen
+   neuen Platz. Andere Browser wechseln die Seite wie bisher. */
+@view-transition {
+	navigation: auto;
+}
+
+header.site-header[data-kopfzeile] {
+	view-transition-name: kopfzeile;
+}
+
+::view-transition-group(*) {
+	animation-duration: 750ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+::view-transition-old(root) {
+	animation: 350ms ease both seite-raus;
+}
+
+::view-transition-new(root) {
+	animation: 600ms cubic-bezier(0.22, 1, 0.36, 1) 150ms both seite-rein;
+}
+
+@keyframes seite-raus {
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes seite-rein {
+	from {
+		opacity: 0;
+		transform: translateY(24px);
+	}
+}
+
+/* Bild-Inhalt beim Wachsen nicht verzerren, sondern zuschneiden */
+::view-transition-old(*):only-child,
+::view-transition-new(*):only-child {
+	height: 100%;
+	object-fit: cover;
+}
+
+::view-transition-image-pair(*) {
+	overflow: hidden;
+}
+
+/* Nach einem Übergang stehen Titelbild und Kacheln sofort fertig da */
+.per-uebergang [data-titelbild] img,
+.per-uebergang [data-kachel],
+.per-uebergang [data-kachel] .kachel-bild,
+.per-uebergang [data-kachel] .kachel-text > * {
+	transition: none !important;
+	opacity: 1 !important;
+	transform: none !important;
+	filter: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	@view-transition {
+		navigation: none;
+	}
+}
+
+/* --- Kontaktformular ------------------------------------------------- */
+/* Beim Klick in ein Feld zeichnet sich die Unterkante von links als Linie. */
+.ec-form .ec-form-input,
+.ec-form textarea,
+.ec-form select {
+	background-image: linear-gradient(var(--color-text), var(--color-text));
+	background-repeat: no-repeat;
+	background-position: left bottom;
+	background-size: 0% 2px;
+	transition:
+		background-size 600ms cubic-bezier(0.22, 1, 0.36, 1),
+		border-color 300ms ease;
+}
+
+.ec-form .ec-form-input:focus,
+.ec-form textarea:focus,
+.ec-form select:focus {
+	background-size: 100% 2px;
+	border-color: var(--color-border);
+}
+
+/* Bezeichnung des aktiven Felds wird dunkel */
+.ec-form .ec-form-field:focus-within .ec-form-label {
+	color: var(--color-text);
+	transition: color 300ms ease;
+}
+
+/* Erfolgsmeldung nach dem Absenden: Kreis und Häkchen zeichnen sich */
+.ec-form .ec-form-status--success {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-top: 1.25rem;
+	padding: 1.1rem 1.25rem;
+	border: 1px solid var(--color-border);
+	background: var(--color-surface);
+	color: var(--color-text);
+	animation: erfolg-rein 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.erfolg-haken {
+	flex: 0 0 auto;
+	width: 40px;
+	height: 40px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.5;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.erfolg-haken circle {
+	stroke-dasharray: 126;
+	stroke-dashoffset: 126;
+	animation: zeichnen 700ms cubic-bezier(0.65, 0, 0.35, 1) 100ms forwards;
+}
+
+.erfolg-haken polyline {
+	stroke-dasharray: 30;
+	stroke-dashoffset: 30;
+	animation: zeichnen 450ms cubic-bezier(0.65, 0, 0.35, 1) 700ms forwards;
+}
+
+@keyframes zeichnen {
+	to {
+		stroke-dashoffset: 0;
+	}
+}
+
+@keyframes erfolg-rein {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ec-form .ec-form-status--success,
+	.erfolg-haken circle,
+	.erfolg-haken polyline {
+		animation: none;
+		stroke-dashoffset: 0;
+	}
+}

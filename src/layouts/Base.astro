@@ -118,6 +118,11 @@ const isLoggedIn = !!Astro.locals.user;
 				if (!window.matchMedia || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 				var r = document.documentElement;
 				r.classList.add("bewegt");
+				// Kommt die Seite per Übergang (Modell-Bild wächst), startet sie
+				// ohne eigene Einstiegs-Animation, damit nichts doppelt läuft.
+				window.addEventListener("pagereveal", function (e) {
+					if (e.viewTransition) r.classList.add("per-uebergang");
+				});
 				setTimeout(function () {
 					if (!r.classList.contains("anim-bereit")) r.classList.remove("bewegt");
 				}, 3000);
@@ -283,10 +288,11 @@ const isLoggedIn = !!Astro.locals.user;
 		</script>
 
 		<script>
-			import { animationenStarten } from "../lib/animationen";
+			import { animationenStarten, formularErfolgStarten } from "../lib/animationen";
 			import { kopfzeileStarten } from "../lib/menue";
 			animationenStarten();
 			kopfzeileStarten();
+			formularErfolgStarten();
 		</script>
 
 		<style is:global>
