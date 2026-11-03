@@ -4,8 +4,9 @@
 	"main": "./src/worker.ts",
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
-	// Website läuft nur über die eigene Domain (workers.dev-Adresse aus).
-	"workers_dev": false,
+	// workers.dev-Adresse eingeschaltet, solange die Domain auf Strato zeigt:
+	// https://ludwiglivinggroup.ludwiglivinggroup.workers.dev
+	"workers_dev": true,
 	"preview_urls": false,
 	"routes": [
 		{ "pattern": "ludwiglivinggroup.de", "custom_domain": true },
