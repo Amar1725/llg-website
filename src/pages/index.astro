@@ -271,10 +271,21 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 		flex-wrap: wrap;
 	}
 
+	/* Karussell geht über die ganze Bildschirmbreite; das aktive Modell steht
+	   in der Mitte, links und rechts schauen die Nachbarn hervor. */
+	:global(main) {
+		overflow-x: clip;
+	}
+
 	.raster {
-		--spalten: 3;
+		--breite: clamp(320px, 38vw, 580px);
 		display: flex;
 		gap: var(--spacing-lg);
+		margin-inline: calc(50% - 50vw);
+		/* Rand, damit auch das erste und letzte Modell mittig stehen können
+		   (genauer Wert kommt aus dem Skript) */
+		padding-inline: var(--rand, calc(50vw - var(--breite) / 2));
+		scroll-padding-inline: var(--rand, calc(50vw - var(--breite) / 2));
 		overflow-x: auto;
 		scroll-snap-type: x mandatory;
 		scroll-behavior: smooth;
@@ -351,11 +362,11 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 	}
 
 	.kachel {
-		flex: 0 0 calc((100% - (var(--spalten) - 1) * var(--spacing-lg)) / var(--spalten));
-		scroll-snap-align: start;
+		flex: 0 0 var(--breite);
+		scroll-snap-align: center;
 		position: relative;
 		display: block;
-		aspect-ratio: 4 / 5;
+		aspect-ratio: 4 / 4.4;
 		overflow: hidden;
 		background: var(--color-surface);
 		color: #ffffff;
@@ -562,16 +573,20 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 			min-height: 80vh;
 		}
 
-		/* Handy: ein Modell, das nächste schaut am Rand hervor (wischen) */
+		/* Handy: ein Modell in der Mitte, die Nachbarn schauen am Rand hervor */
+		.raster {
+			--breite: 76vw;
+			gap: var(--spacing-md);
+		}
+
 		.kachel {
-			flex-basis: 85%;
-			aspect-ratio: 4 / 4.5;
+			aspect-ratio: 4 / 4.8;
 		}
 	}
 
 	@media (min-width: 641px) and (max-width: 1000px) {
 		.raster {
-			--spalten: 2;
+			--breite: 44vw;
 		}
 	}
 
@@ -606,7 +621,15 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 			const abstand = parseFloat(getComputedStyle(raster).columnGap || "0") || 0;
 			return kachel ? kachel.getBoundingClientRect().width + abstand : raster.clientWidth;
 		};
+		// Rand so setzen, dass ein Modell genau in der Mitte steht
+		const randSetzen = () => {
+			const kachel = raster.querySelector<HTMLElement>(".kachel");
+			if (!kachel) return;
+			const rand = Math.max(0, (raster.clientWidth - kachel.getBoundingClientRect().width) / 2);
+			raster.style.setProperty("--rand", `${rand}px`);
+		};
 		const aktualisieren = () => {
+			randSetzen();
 			raster.classList.toggle("ziehbar", kannBlaettern());
 			if (!kannBlaettern()) hinweis.classList.remove("an");
 		};
@@ -697,6 +720,12 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 
 		window.addEventListener("resize", aktualisieren);
 		aktualisieren();
+
+		// Ab drei Modellen mit dem zweiten in der Mitte starten, damit links und
+		// rechts je ein Nachbar hervorschaut
+		if (raster.querySelectorAll(".kachel").length >= 3) {
+			raster.scrollTo({ left: schritt(), behavior: "instant" as ScrollBehavior });
+		}
 	}
 
 	karussellStarten();
