@@ -45,25 +45,32 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 ---
 
 <Base title={titel} description={slogan} image={teilenBild}>
-	<section class:list={["hero", { "ohne-bild": !heroBild }]}>
-		{heroBild && (
-			<div class="hero-bild">
-				{/* Sofort laden (nicht lazy), da es das erste sichtbare Bild ist */}
-				<img
-					src={teilenBild}
-					alt={heroBild.alt || ""}
-					width={heroBild.width}
-					height={heroBild.height}
-					loading="eager"
-					fetchpriority="high"
-					decoding="async"
-				/>
-			</div>
-		)}
+	<section class="hero">
+		{/* Hintergrund-Video (Wohncontainer werden gestapelt), läuft stumm im Loop.
+		    Bei "reduzierter Bewegung" wird stattdessen das Standbild gezeigt. */}
+		<div class="hero-bild" aria-hidden="true">
+			<video
+				class="hero-video"
+				autoplay
+				muted
+				loop
+				playsinline
+				preload="auto"
+				poster="/hero/wohncontainer-start.jpg"
+				disablepictureinpicture
+			>
+				<source src="/hero/wohncontainer-handy.mp4" type="video/mp4" media="(max-width: 640px) and (orientation: portrait)" />
+				<source src="/hero/wohncontainer.mp4" type="video/mp4" />
+			</video>
+			<picture class="hero-standbild">
+				<source srcset="/hero/wohncontainer-handy.jpg" media="(max-width: 640px) and (orientation: portrait)" />
+				<img src="/hero/wohncontainer.jpg" alt="" width="1920" height="1080" loading="lazy" />
+			</picture>
+		</div>
 		<div class="hero-inhalt container">
 			<h1>{slogan}</h1>
 			{anzahl > 0 && (
-				<a href="#modelle" class:list={["btn", heroBild ? "btn-hell" : "btn-dunkel"]}>
+				<a href="#modelle" class="btn btn-hell">
 					Modelle ansehen
 				</a>
 			)}
@@ -172,14 +179,8 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 		display: flex;
 		align-items: flex-end;
 		color: #ffffff;
-		background: var(--color-bg);
+		background: #141920;
 		overflow: hidden;
-	}
-
-	.hero.ohne-bild {
-		min-height: 60vh;
-		color: var(--color-text);
-		background: var(--color-surface);
 	}
 
 	/* Bild läuft nach unten transparent in den Seitenhintergrund aus */
@@ -190,11 +191,36 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 		mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
 	}
 
-	.hero-bild :global(img) {
+	/* Das Haus steht rechts im Video: auf schmalen Bildschirmen bleibt es sichtbar */
+	.hero-video,
+	.hero-standbild :global(img) {
+		position: absolute;
+		inset: 0;
 		width: 100%;
 		height: 100%;
 		max-width: none;
 		object-fit: cover;
+		object-position: 64% 40%;
+	}
+
+	.hero-standbild {
+		display: none;
+	}
+
+	@media (max-width: 640px) and (orientation: portrait) {
+		.hero-video,
+		.hero-standbild :global(img) {
+			object-position: 50% 20%;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.hero-video {
+			display: none;
+		}
+		.hero-standbild {
+			display: block;
+		}
 	}
 
 	/* Dunkle Zone hinter dem weißen Titel, damit er lesbar bleibt */
@@ -202,7 +228,7 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 		content: "";
 		position: absolute;
 		inset: 0;
-		background: linear-gradient(to top, rgb(0 0 0 / 0.6) 25%, rgb(0 0 0 / 0.5) 50%, rgb(0 0 0 / 0.12) 85%);
+		background: linear-gradient(to top, rgb(0 0 0 / 0.55) 20%, rgb(0 0 0 / 0.25) 50%, rgb(0 0 0 / 0) 80%);
 	}
 
 	/* Titel sitzt über der Ausblendung, nicht im hellen Bereich */
