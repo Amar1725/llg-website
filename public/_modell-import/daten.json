@@ -1,0 +1,644 @@
+[
+ {
+  "titel": "Villa Sabrina",
+  "slug": "villa-sabrina",
+  "absaetze": [
+   "Zweigeschossiges Modulhaus in Holzbauweise, geplant für ein Hanggrundstück. Unterschiedlich geneigte Dächer, ein Balkon mit Glasgeländer im Obergeschoss und ein gestufter Zugang vom Garten geben dem Haus ein ausgewogenes, einladendes Erscheinungsbild.",
+   "Im Erdgeschoss liegt der Eingang geschützt unter einer überdachten Veranda, große Fenster öffnen den Wohnbereich zum Garten."
+  ],
+  "ausstattung": "Zwei Geschosse\nBalkon mit Glasgeländer\nÜberdachte Veranda am Eingang\nGroße Fensterflächen zum Garten\nFür Hanglage geplant",
+  "wohnflaeche": null,
+  "zimmer": null,
+  "baeder": null,
+  "bilder": [
+   {
+    "pfad": "/_modell-import/villa-sabrina/villa-sabrina-01.jpg",
+    "datei": "villa-sabrina-01.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-sabrina/villa-sabrina-02.jpg",
+    "datei": "villa-sabrina-02.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-sabrina/villa-sabrina-03.jpg",
+    "datei": "villa-sabrina-03.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-sabrina/villa-sabrina-04.jpg",
+    "datei": "villa-sabrina-04.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   }
+  ]
+ },
+ {
+  "titel": "Villa Roberta",
+  "slug": "villa-roberta",
+  "absaetze": [
+   "Zweigeschossiges Modulhaus in Holzbauweise mit modernen Baukörpern, dunklen Fassaden und integrierter Beleuchtung. Zum Garten hin liegen offene Terrassen zum Entspannen.",
+   "Im Essbereich trifft warmes Holz auf klare Linien, das Schlafzimmer hat glänzende Wandpaneele und Holzboden, das Bad Steinoberflächen mit dunklen Holzakzenten."
+  ],
+  "ausstattung": "Zwei Geschosse\nDunkle Fassade mit integrierter Beleuchtung\nTerrassen zum Garten\nHolzboden im Schlafzimmer\nBad mit Steinoberflächen",
+  "wohnflaeche": null,
+  "zimmer": null,
+  "baeder": null,
+  "bilder": [
+   {
+    "pfad": "/_modell-import/villa-roberta/villa-roberta-01.jpg",
+    "datei": "villa-roberta-01.jpg",
+    "breite": 816,
+    "hoehe": 1056
+   },
+   {
+    "pfad": "/_modell-import/villa-roberta/villa-roberta-02.jpg",
+    "datei": "villa-roberta-02.jpg",
+    "breite": 816,
+    "hoehe": 1056
+   },
+   {
+    "pfad": "/_modell-import/villa-roberta/villa-roberta-03.jpg",
+    "datei": "villa-roberta-03.jpg",
+    "breite": 816,
+    "hoehe": 1056
+   },
+   {
+    "pfad": "/_modell-import/villa-roberta/villa-roberta-04.jpg",
+    "datei": "villa-roberta-04.jpg",
+    "breite": 816,
+    "hoehe": 1056
+   },
+   {
+    "pfad": "/_modell-import/villa-roberta/villa-roberta-05.jpg",
+    "datei": "villa-roberta-05.jpg",
+    "breite": 816,
+    "hoehe": 1056
+   }
+  ]
+ },
+ {
+  "titel": "Villa Rita",
+  "slug": "villa-rita",
+  "absaetze": [
+   "Eingeschossiges Modulhaus in Holzbauweise mit breitem Dach, weitem Dachüberstand und sichtbarer Holzkonstruktion. Die überdachte, von Stützen getragene Terrasse öffnet sich zum Garten.",
+   "Wohn- und Essbereich bilden einen offenen Raum mit hoher Balkendecke, große Glasflächen verbinden ihn mit der Terrasse."
+  ],
+  "ausstattung": "Ein Geschoss\nÜberdachte Terrasse\nHohe Decke mit sichtbaren Balken\nOffener Wohn- und Essbereich\nGroße Glasflächen",
+  "wohnflaeche": null,
+  "zimmer": null,
+  "baeder": null,
+  "bilder": [
+   {
+    "pfad": "/_modell-import/villa-rita/villa-rita-01.jpg",
+    "datei": "villa-rita-01.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-rita/villa-rita-02.jpg",
+    "datei": "villa-rita-02.jpg",
+    "breite": 1600,
+    "hoehe": 1015
+   },
+   {
+    "pfad": "/_modell-import/villa-rita/villa-rita-03.jpg",
+    "datei": "villa-rita-03.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-rita/villa-rita-04.jpg",
+    "datei": "villa-rita-04.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-rita/villa-rita-05.jpg",
+    "datei": "villa-rita-05.jpg",
+    "breite": 1600,
+    "hoehe": 927
+   }
+  ]
+ },
+ {
+  "titel": "Villa Marilena",
+  "slug": "villa-marilena",
+  "absaetze": [
+   "Modulhaus in Holzbauweise mit Erd- und Obergeschoss und einem Balkon mit Glasgeländer über der Veranda. Klare Fassadenlinien, Holzakzente und integrierte Beleuchtung sorgen für einen modernen, einladenden Auftritt.",
+   "Der offene Wohnbereich vereint Wohnzimmer mit Kamin, Essplatz und Küche; eine leichte Treppe führt nach oben. Das Schlafzimmer hat sichtbare Holzbalken, das Bad eine ebenerdige Dusche."
+  ],
+  "ausstattung": "Zwei Geschosse\nBalkon mit Glasgeländer über der Veranda\nWohnzimmer mit Kamin\nOffene Küche mit Essplatz\nBad mit ebenerdiger Dusche",
+  "wohnflaeche": null,
+  "zimmer": null,
+  "baeder": null,
+  "bilder": [
+   {
+    "pfad": "/_modell-import/villa-marilena/villa-marilena-01.jpg",
+    "datei": "villa-marilena-01.jpg",
+    "breite": 1920,
+    "hoehe": 1080
+   },
+   {
+    "pfad": "/_modell-import/villa-marilena/villa-marilena-02.jpg",
+    "datei": "villa-marilena-02.jpg",
+    "breite": 1800,
+    "hoehe": 1012
+   },
+   {
+    "pfad": "/_modell-import/villa-marilena/villa-marilena-03.jpg",
+    "datei": "villa-marilena-03.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-marilena/villa-marilena-04.jpg",
+    "datei": "villa-marilena-04.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-marilena/villa-marilena-05.jpg",
+    "datei": "villa-marilena-05.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-marilena/villa-marilena-06.jpg",
+    "datei": "villa-marilena-06.jpg",
+    "breite": 1920,
+    "hoehe": 988
+   }
+  ]
+ },
+ {
+  "titel": "Villa 939",
+  "slug": "villa-939",
+  "absaetze": [
+   "Eingeschossiges Modulhaus in Holzbauweise mit Pultdach und weißer Fassade, kombiniert mit Holz und dunklen Elementen. Das Vordach über dem Eingang überdeckt gleichzeitig den Stellplatz.",
+   "Innen vereint ein offener Wohnbereich Küche, Essplatz und ein helles Wohnzimmer; Schlafzimmer und Bad sind mit warmem Holz und Stein ausgestattet."
+  ],
+  "ausstattung": "Ein Geschoss\nPultdach\nVordach mit Stellplatz\nOffene Küche mit Wohn- und Essbereich\nHolz- und Steinoberflächen",
+  "wohnflaeche": null,
+  "zimmer": null,
+  "baeder": null,
+  "bilder": [
+   {
+    "pfad": "/_modell-import/villa-939/villa-939-01.jpg",
+    "datei": "villa-939-01.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-939/villa-939-02.jpg",
+    "datei": "villa-939-02.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-939/villa-939-03.jpg",
+    "datei": "villa-939-03.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-939/villa-939-04.jpg",
+    "datei": "villa-939-04.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   }
+  ]
+ },
+ {
+  "titel": "Villa 909",
+  "slug": "villa-909",
+  "absaetze": [
+   "Zweigeschossiges Modulhaus in Holzbauweise, dessen Fassade Naturstein, Holz und hellen Putz verbindet. Große Fenster bringen Tageslicht in jeden Raum, eine Innentreppe verbindet die beiden Geschosse.",
+   "Die offene Küche mit Kochinsel und grünen Marmorakzenten geht direkt in den Wohn- und Essbereich über."
+  ],
+  "ausstattung": "Zwei Geschosse\nFassade aus Naturstein, Holz und Putz\nOffene Küche mit Kochinsel\nGroßzügiges Hauptschlafzimmer\nInnentreppe",
+  "wohnflaeche": null,
+  "zimmer": null,
+  "baeder": null,
+  "bilder": [
+   {
+    "pfad": "/_modell-import/villa-909/villa-909-01.jpg",
+    "datei": "villa-909-01.jpg",
+    "breite": 1600,
+    "hoehe": 932
+   },
+   {
+    "pfad": "/_modell-import/villa-909/villa-909-02.jpg",
+    "datei": "villa-909-02.jpg",
+    "breite": 1600,
+    "hoehe": 899
+   },
+   {
+    "pfad": "/_modell-import/villa-909/villa-909-03.jpg",
+    "datei": "villa-909-03.jpg",
+    "breite": 1600,
+    "hoehe": 899
+   },
+   {
+    "pfad": "/_modell-import/villa-909/villa-909-04.jpg",
+    "datei": "villa-909-04.jpg",
+    "breite": 1600,
+    "hoehe": 959
+   },
+   {
+    "pfad": "/_modell-import/villa-909/villa-909-05.jpg",
+    "datei": "villa-909-05.jpg",
+    "breite": 1600,
+    "hoehe": 899
+   },
+   {
+    "pfad": "/_modell-import/villa-909/villa-909-06.jpg",
+    "datei": "villa-909-06.jpg",
+    "breite": 1600,
+    "hoehe": 899
+   },
+   {
+    "pfad": "/_modell-import/villa-909/villa-909-07.jpg",
+    "datei": "villa-909-07.jpg",
+    "breite": 1600,
+    "hoehe": 899
+   },
+   {
+    "pfad": "/_modell-import/villa-909/villa-909-08.jpg",
+    "datei": "villa-909-08.jpg",
+    "breite": 1600,
+    "hoehe": 899
+   },
+   {
+    "pfad": "/_modell-import/villa-909/villa-909-09.jpg",
+    "datei": "villa-909-09.jpg",
+    "breite": 1600,
+    "hoehe": 899
+   },
+   {
+    "pfad": "/_modell-import/villa-909/villa-909-10.jpg",
+    "datei": "villa-909-10.jpg",
+    "breite": 1600,
+    "hoehe": 899
+   }
+  ]
+ },
+ {
+  "titel": "Villa 906",
+  "slug": "villa-906",
+  "absaetze": [
+   "Zweigeschossiges Modulhaus in Holzbauweise mit weißen und schwarzen Baukörpern und klaren Linien. Im Erdgeschoss öffnet sich das Wohnzimmer mit hoher Decke über große Glasflächen zu Terrasse und Garten; der Essbereich setzt sich draußen unter einer Pergola fort.",
+   "Im Obergeschoss liegt eine breite Terrasse mit Glasgeländer, der Eingang ist durch einen dunkel verkleideten Baukörper betont."
+  ],
+  "ausstattung": "Zwei Geschosse\nWohnzimmer mit hoher Decke\nPergola am Essbereich\nDachterrasse mit Glasgeländer\nGroße Glasflächen",
+  "wohnflaeche": null,
+  "zimmer": null,
+  "baeder": null,
+  "bilder": [
+   {
+    "pfad": "/_modell-import/villa-906/villa-906-01.jpg",
+    "datei": "villa-906-01.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-906/villa-906-02.jpg",
+    "datei": "villa-906-02.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-906/villa-906-03.jpg",
+    "datei": "villa-906-03.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-906/villa-906-04.jpg",
+    "datei": "villa-906-04.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-906/villa-906-05.jpg",
+    "datei": "villa-906-05.jpg",
+    "breite": 1600,
+    "hoehe": 899
+   },
+   {
+    "pfad": "/_modell-import/villa-906/villa-906-06.jpg",
+    "datei": "villa-906-06.jpg",
+    "breite": 1600,
+    "hoehe": 899
+   }
+  ]
+ },
+ {
+  "titel": "Villa 903",
+  "slug": "villa-903",
+  "absaetze": [
+   "Eingeschossiges Modulhaus in Holzbauweise mit Satteldach und weißer Fassade mit Holzdetails.",
+   "Der Grundriss umfasst eine Wohnküche mit 31,6 m², ein Schlafzimmer mit 11,7 m² samt begehbarem Kleiderschrank (3,7 m²), ein zweites Schlafzimmer oder Arbeitszimmer mit 9,8 m², ein Bad mit 6,7 m², ein separates WC und einen Technikraum. Die überdachte Veranda mit 11,2 m² verlängert das Wohnzimmer in den Garten."
+  ],
+  "ausstattung": "Ein Geschoss\nSatteldach\nWohnküche 31,6 m²\nBegehbarer Kleiderschrank\nSeparates WC und Technikraum\nÜberdachte Veranda 11,2 m²",
+  "wohnflaeche": null,
+  "zimmer": 2,
+  "baeder": 1,
+  "bilder": [
+   {
+    "pfad": "/_modell-import/villa-903/villa-903-01.jpg",
+    "datei": "villa-903-01.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-903/villa-903-02.jpg",
+    "datei": "villa-903-02.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-903/villa-903-03.jpg",
+    "datei": "villa-903-03.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-903/villa-903-04.jpg",
+    "datei": "villa-903-04.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-903/villa-903-05.jpg",
+    "datei": "villa-903-05.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-903/villa-903-06.jpg",
+    "datei": "villa-903-06.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/villa-903/villa-903-07.jpg",
+    "datei": "villa-903-07.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   }
+  ]
+ },
+ {
+  "titel": "Imperial House",
+  "slug": "imperial-house",
+  "absaetze": [
+   "Modulhaus in Holzbauweise mit 58 m² Grundfläche, zwei Schlafzimmern und zwei Bädern. Erdige Farben und natürliche Materialien fügen das Haus harmonisch in die Umgebung ein und schaffen einen fließenden Übergang zwischen innen und außen.",
+   "Sorgfältig ausgeführte Fassaden, ein robustes Holztragwerk und eine Schutzbehandlung des Unterbaus sorgen für Langlebigkeit. Innen erwarten Sie hochwertige Wandoberflächen mit Holzverkleidung, elektrische Warmwasserbereitung und eine Lüftung mit Wärmerückgewinnung. Farben und Materialien lassen sich in der Planung an Ihre Wünsche anpassen."
+  ],
+  "ausstattung": "2 Schlafzimmer, 2 Bäder\nHolzverkleidete Wände\nLüftung mit Wärmerückgewinnung\nElektrische Warmwasserbereitung\nFarben und Materialien wählbar",
+  "wohnflaeche": 58,
+  "zimmer": 2,
+  "baeder": 2,
+  "bilder": [
+   {
+    "pfad": "/_modell-import/imperial-house/imperial-house-01.jpg",
+    "datei": "imperial-house-01.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/imperial-house/imperial-house-02.jpg",
+    "datei": "imperial-house-02.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/imperial-house/imperial-house-03.jpg",
+    "datei": "imperial-house-03.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/imperial-house/imperial-house-04.jpg",
+    "datei": "imperial-house-04.jpg",
+    "breite": 1400,
+    "hoehe": 1866
+   },
+   {
+    "pfad": "/_modell-import/imperial-house/imperial-house-05.jpg",
+    "datei": "imperial-house-05.jpg",
+    "breite": 1400,
+    "hoehe": 1866
+   }
+  ]
+ },
+ {
+  "titel": "Mini Nest",
+  "slug": "mini-nest",
+  "absaetze": [
+   "Kompaktes Modulhaus mit 24,3 m² und auffälliger Fassade aus kontrastierenden Holzpaneelen und Metalleinsätzen.",
+   "Innen ist der offene Raum geschickt gegliedert: Küche, eine Sofa-Treppe als Aufgang zur Schlafgalerie und darunter eine gemütliche Nische zum Entspannen. Platz für bis zu vier Personen, ganzjährig nutzbar – ideal als Ferienhaus oder Gästehaus."
+  ],
+  "ausstattung": "Schlafgalerie\nSofa mit integrierter Treppe\nKüche\nFür bis zu 4 Personen\nGanzjährig nutzbar",
+  "wohnflaeche": 24.3,
+  "zimmer": 2,
+  "baeder": 1,
+  "bilder": [
+   {
+    "pfad": "/_modell-import/mini-nest/mini-nest-01.jpg",
+    "datei": "mini-nest-01.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/mini-nest/mini-nest-02.jpg",
+    "datei": "mini-nest-02.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/mini-nest/mini-nest-03.jpg",
+    "datei": "mini-nest-03.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/mini-nest/mini-nest-04.jpg",
+    "datei": "mini-nest-04.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/mini-nest/mini-nest-05.jpg",
+    "datei": "mini-nest-05.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/mini-nest/mini-nest-06.jpg",
+    "datei": "mini-nest-06.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/mini-nest/mini-nest-07.jpg",
+    "datei": "mini-nest-07.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/mini-nest/mini-nest-08.jpg",
+    "datei": "mini-nest-08.jpg",
+    "breite": 1400,
+    "hoehe": 1866
+   },
+   {
+    "pfad": "/_modell-import/mini-nest/mini-nest-09.jpg",
+    "datei": "mini-nest-09.jpg",
+    "breite": 1400,
+    "hoehe": 1866
+   },
+   {
+    "pfad": "/_modell-import/mini-nest/mini-nest-10.jpg",
+    "datei": "mini-nest-10.jpg",
+    "breite": 1400,
+    "hoehe": 1866
+   }
+  ]
+ },
+ {
+  "titel": "Twin",
+  "slug": "twin",
+  "absaetze": [
+   "Modulhaus in Holzbauweise mit 37,7 m², drei Schlafzimmern und einem Bad. Erdige Farben und natürliche Materialien verbinden das Haus mit seiner Umgebung.",
+   "Holzverkleidete Wände, elektrische Warmwasserbereitung und eine Lüftung mit Wärmerückgewinnung sorgen für ein angenehmes Wohnklima. Farben und Materialien lassen sich in der Planung an Ihre Wünsche anpassen."
+  ],
+  "ausstattung": "3 Schlafzimmer, 1 Bad\nHolzverkleidete Wände\nLüftung mit Wärmerückgewinnung\nElektrische Warmwasserbereitung\nFarben und Materialien wählbar",
+  "wohnflaeche": 37.7,
+  "zimmer": 3,
+  "baeder": 1,
+  "bilder": [
+   {
+    "pfad": "/_modell-import/twin/twin-01.jpg",
+    "datei": "twin-01.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/twin/twin-02.jpg",
+    "datei": "twin-02.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/twin/twin-03.jpg",
+    "datei": "twin-03.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/twin/twin-04.jpg",
+    "datei": "twin-04.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/twin/twin-05.jpg",
+    "datei": "twin-05.jpg",
+    "breite": 1200,
+    "hoehe": 1600
+   },
+   {
+    "pfad": "/_modell-import/twin/twin-06.jpg",
+    "datei": "twin-06.jpg",
+    "breite": 1400,
+    "hoehe": 1866
+   }
+  ]
+ },
+ {
+  "titel": "Calma",
+  "slug": "calma",
+  "absaetze": [
+   "Ruhiger Rückzugsort mit 25,6 m², einem Schlafzimmer und einem Bad. Die Fassade aus kontrastierenden Holzpaneelen wirkt zurückhaltend elegant und fügt sich in die Umgebung ein.",
+   "Maßvolle Glasflächen sorgen für Privatsphäre und gute Wärmedämmung – angenehm zu jeder Jahreszeit. Ideal für zwei Personen."
+  ],
+  "ausstattung": "1 Schlafzimmer, 1 Bad\nFassade aus Holzpaneelen\nGute Wärmedämmung\nIdeal für 2 Personen\nGanzjährig nutzbar",
+  "wohnflaeche": 25.6,
+  "zimmer": 1,
+  "baeder": 1,
+  "bilder": [
+   {
+    "pfad": "/_modell-import/calma/calma-01.jpg",
+    "datei": "calma-01.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/calma/calma-02.jpg",
+    "datei": "calma-02.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/calma/calma-03.jpg",
+    "datei": "calma-03.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/calma/calma-04.jpg",
+    "datei": "calma-04.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/calma/calma-05.jpg",
+    "datei": "calma-05.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/calma/calma-06.jpg",
+    "datei": "calma-06.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/calma/calma-07.jpg",
+    "datei": "calma-07.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/calma/calma-08.jpg",
+    "datei": "calma-08.jpg",
+    "breite": 1600,
+    "hoehe": 900
+   },
+   {
+    "pfad": "/_modell-import/calma/calma-09.jpg",
+    "datei": "calma-09.jpg",
+    "breite": 1400,
+    "hoehe": 1866
+   },
+   {
+    "pfad": "/_modell-import/calma/calma-10.jpg",
+    "datei": "calma-10.jpg",
+    "breite": 1400,
+    "hoehe": 1866
+   },
+   {
+    "pfad": "/_modell-import/calma/calma-11.jpg",
+    "datei": "calma-11.jpg",
+    "breite": 1400,
+    "hoehe": 1866
+   }
+  ]
+ }
+]

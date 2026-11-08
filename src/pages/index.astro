@@ -23,8 +23,8 @@ try {
 const settingsResult = await getSiteSettingsWithCacheHint();
 if (Astro.cache?.enabled) Astro.cache.set(settingsResult.cacheHint);
 const settings = settingsResult.data;
-const titel = settings?.title || "Containerhäuser";
-const slogan = settings?.tagline || "Containerhäuser, fertig geplant und geliefert";
+const titel = settings?.title || "Modellhäuser";
+const slogan = settings?.tagline || "Modellhäuser, fertig geplant und geliefert";
 
 const zahl = new Intl.NumberFormat("de-DE");
 

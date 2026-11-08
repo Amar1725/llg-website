@@ -1,5 +1,5 @@
 ---
-// Detailseite für ein Modell (Containerhaus): Titelbild über die ganze Breite,
+// Detailseite für ein Modell (Modellhaus): Titelbild über die ganze Breite,
 // danach Beschreibung, Eckdaten, Ausstattung, Galerie und Anfrageformular.
 import { getEmDashEntry, getSeoMeta } from "emdash";
 import { Image, PortableText } from "emdash/ui";
@@ -73,7 +73,7 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 				)
 			}
 			<div class="kopf-text container">
-				<p class="ort" data-reveal>Containerhaus</p>
+				<p class="ort" data-reveal>Modellhaus</p>
 				<h1 data-reveal style="--i: 1" {...haus.edit.title}>{d.title}</h1>
 			</div>
 		</header>

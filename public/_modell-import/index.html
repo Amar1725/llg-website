@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Modelle importieren</title>
+<style>
+body{margin:0;font-family:system-ui,sans-serif;background:#f6f6f4;color:#1c1d1e}
+main{max-width:720px;margin:0 auto;padding:48px 20px}
+h1{font-weight:400;font-size:28px;margin:0 0 8px}
+p{line-height:1.55;color:#444}
+button{font:inherit;padding:12px 22px;border:0;background:#1c1d1e;color:#fff;cursor:pointer;margin-top:8px}
+button:disabled{opacity:.4;cursor:default}
+#log{margin-top:24px;background:#fff;border:1px solid #ddd;padding:14px 16px;font:13px/1.6 ui-monospace,monospace;white-space:pre-wrap;min-height:120px}
+.ok{color:#1f7a3a}.fehler{color:#b3261e}
+</style>
+</head>
+<body>
+<main>
+<h1>Modelle importieren</h1>
+<p>Legt die 12 Modelle mit allen Bildern auf der Website an und veröffentlicht sie. Die bisherigen Modelle (Kubus 40, Duo 80, Atrium 160 und die Tests) werden auf Entwurf gesetzt, nicht gelöscht.</p>
+<p>Voraussetzung: im Admin angemeldet sein (gleicher Browser). Bereits vorhandene Modelle werden übersprungen, der Import kann also gefahrlos wiederholt werden.</p>
+<button id="los" type="button">Import starten</button>
+<div id="log" aria-live="polite"></div>
+</main>
+<script>
+const API = "/_emdash/api";
+const KOPF = { "X-EmDash-Request": "1" };
+const ALT = ["kubus-40", "duo-80", "atrium-160", "test", "test-2", "test-3"];
+const logEl = document.getElementById("log");
+const log = (t, k) => { const s = document.createElement("div"); if (k) s.className = k; s.textContent = t; logEl.append(s); s.scrollIntoView({ block: "nearest" }); };
+
+async function api(pfad, opt = {}) {
+	const r = await fetch(API + pfad, { credentials: "same-origin", ...opt, headers: { ...KOPF, ...(opt.headers || {}) } });
+	let j = null;
+	try { j = await r.json(); } catch {}
+	if (!r.ok || (j && j.success === false)) throw new Error(`${r.status} ${j?.error?.message || j?.error?.code || r.statusText}`);
+	return j?.data ?? j;
+}
+
+async function alleEintraege() {
+	const liste = [];
+	let cursor = null;
+	do {
+		const d = await api(`/content/hauser?limit=100${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`);
+		liste.push(...(d.items || []));
+		cursor = d.nextCursor || null;
+	} while (cursor);
+	return liste;
+}
+
+async function bildHochladen(b) {
+	const blob = await (await fetch(b.pfad)).blob();
+	const fd = new FormData();
+	fd.append("file", new File([blob], b.datei, { type: "image/jpeg" }));
+	fd.append("width", String(b.breite));
+	fd.append("height", String(b.hoehe));
+	fd.append("deduplicate", "true");
+	const d = await api("/media", { method: "POST", body: fd });
+	const m = d.item;
+	return {
+		id: m.id, provider: m.provider || "local", filename: m.filename, mimeType: m.mimeType,
+		width: m.width, height: m.height, blurhash: m.blurhash, dominantColor: m.dominantColor,
+		alt: "", meta: { storageKey: m.storageKey },
+	};
+}
+
+function text(absaetze) {
+	return absaetze.map((t, i) => ({
+		_type: "block", _key: `b${i}`, style: "normal", markDefs: [],
+		children: [{ _type: "span", _key: `s${i}`, text: t, marks: [] }],
+	}));
+}
+
+document.getElementById("los").addEventListener("click", async (e) => {
+	e.target.disabled = true;
+	try {
+		await api("/auth/me").catch(() => { throw new Error("Nicht angemeldet. Bitte zuerst unter /_emdash/admin anmelden."); });
+		const daten = await (await fetch("/_modell-import/daten.json")).json();
+		const vorhanden = await alleEintraege();
+		const slugs = new Set(vorhanden.map((x) => x.slug));
+
+		for (const m of daten) {
+			if (slugs.has(m.slug)) { log(`${m.titel}: schon vorhanden, übersprungen`); continue; }
+			log(`${m.titel}: ${m.bilder.length} Bilder werden hochgeladen …`);
+			const bilder = [];
+			for (const b of m.bilder) bilder.push(await bildHochladen(b));
+			const data = {
+				title: m.titel,
+				beschreibung: text(m.absaetze),
+				ausstattung: m.ausstattung,
+				titelbild: bilder[0],
+				galerie: bilder.slice(1).map((bild) => ({ bild })),
+			};
+			// Feld erlaubt nur ganze Zahlen; die genaue Fläche steht in der Beschreibung
+			if (m.wohnflaeche != null) data.wohnflaeche = Math.round(m.wohnflaeche);
+			if (m.zimmer != null) data.zimmer = m.zimmer;
+			if (m.baeder != null) data.baeder = m.baeder;
+			const neu = await api("/content/hauser", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ data, slug: m.slug }) });
+			const id = neu.item?.id || neu.id;
+			await api(`/content/hauser/${id}/publish`, { method: "POST" });
+			log(`${m.titel}: angelegt und veröffentlicht`, "ok");
+		}
+
+		for (const x of vorhanden) {
+			if (ALT.includes(x.slug) && x.status === "published") {
+				await api(`/content/hauser/${x.id}/unpublish`, { method: "POST" });
+				log(`${x.data?.title || x.slug}: auf Entwurf gesetzt`);
+			}
+		}
+		log("Fertig. Startseite neu laden, um die Modelle zu sehen.", "ok");
+	} catch (err) {
+		log(`Fehler: ${err.message}`, "fehler");
+		e.target.disabled = false;
+	}
+});
+</script>
+</body>
+</html>
