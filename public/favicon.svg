@@ -2,6 +2,7 @@
   <rect width="64" height="64" fill="#1c1d1e"/>
   <g fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="square" stroke-linejoin="miter">
     <polyline points="13,30 32,14 51,30"/>
-    <polyline points="22,33 22,50 42,50"/>
+    <polyline points="21,32 21,52 41,52"/>
+    <polyline points="29,34 29,44 37,44"/>
   </g>
 </svg>
