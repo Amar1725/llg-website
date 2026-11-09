@@ -31,7 +31,11 @@
 	--gradient-headline: var(--color-text);
 
 	--font-display: var(--font-body);
-	--font-heading: var(--font-body);
+	--font-heading: var(--font-serif, var(--font-body));
+	/* Gold-Akzent (Logo-Farbe), sparsam einsetzen */
+	--gold: #b8975a;
+	--gold-hell: #e2cfa6;
+	--color-sand: #f4f1ea;
 	--font-weight-heading: 400;
 	--font-weight-display: 300;
 	--tracking-tight: -0.01em;
@@ -84,6 +88,35 @@
 .btn-dunkel:hover {
 	color: var(--color-brand);
 	background: transparent;
+}
+
+/* Kleine Überschrift über einem Titel, mit kurzer goldener Linie */
+.kicker {
+	display: flex;
+	align-items: center;
+	gap: 0.9rem;
+	font-family: var(--font-body);
+	font-size: 0.75rem;
+	font-weight: 500;
+	letter-spacing: 0.24em;
+	text-transform: uppercase;
+	color: var(--gold);
+	margin-bottom: var(--spacing-sm);
+}
+
+.kicker::before {
+	content: "";
+	width: 2rem;
+	height: 1px;
+	background: currentColor;
+	flex-shrink: 0;
+}
+
+/* Kursives Akzentwort in Titeln */
+h1 em,
+h2 em {
+	font-style: italic;
+	color: var(--gold);
 }
 
 ::selection {

@@ -13,16 +13,22 @@ const ZIELE = "[data-reveal], [data-zeilen], [data-linie], [data-vorhang], [data
 function woerterTrennen(el: HTMLElement) {
 	if (el.dataset.getrennt) return;
 	el.dataset.getrennt = "1";
-	const text = el.textContent?.trim() ?? "";
+	const text = el.textContent?.trim().replace(/\s+/g, " ") ?? "";
 	if (!text) return;
+	// Wörter sammeln; Wörter in <em> bleiben kursiv
+	const teile: { wort: string; tag?: string }[] = [];
+	el.childNodes.forEach((n) => {
+		const tag = n.nodeType === 1 ? (n as Element).tagName.toLowerCase() : undefined;
+		(n.textContent ?? "").split(/\s+/).filter(Boolean).forEach((wort) => teile.push({ wort, tag }));
+	});
 	// Für Screenreader den ganzen Satz behalten
 	el.setAttribute("aria-label", text);
 	el.textContent = "";
-	text.split(/\s+/).forEach((wort, i, alle) => {
+	teile.forEach(({ wort, tag }, i, alle) => {
 		const huelle = document.createElement("span");
 		huelle.className = "wort";
 		huelle.setAttribute("aria-hidden", "true");
-		const innen = document.createElement("span");
+		const innen = document.createElement(tag === "em" ? "em" : "span");
 		innen.textContent = wort;
 		innen.style.setProperty("--w", String(i));
 		huelle.append(innen);

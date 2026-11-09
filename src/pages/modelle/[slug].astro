@@ -24,7 +24,7 @@ const d = haus.data as any;
 const zahl = new Intl.NumberFormat("de-DE");
 const eckdatenKurz = [
 	d.wohnflaeche != null && `${zahl.format(d.wohnflaeche)} m² Wohnfläche`,
-	d.module != null && `${d.module} Container`,
+	d.module != null && `${d.module} Module`,
 	d.zimmer != null && `${zahl.format(d.zimmer)} Zimmer`,
 ].filter(Boolean).join(", ");
 const teilenText = [eckdatenKurz, kurzText(d.beschreibung, 150)].filter(Boolean).join(". ");
@@ -35,7 +35,7 @@ const galerie: any[] = Array.isArray(d.galerie) ? d.galerie.filter((row: any) =>
 const eckdaten = [
 	d.wohnflaeche != null && { label: "Wohnfläche", wert: `${zahl.format(d.wohnflaeche)} m²`, zaehlen: d.wohnflaeche, einheit: " m²" },
 	d.masse && { label: "Maße (L × B × H)", wert: d.masse },
-	d.module != null && { label: "Container", wert: String(d.module), zaehlen: d.module },
+	d.module != null && { label: "Module", wert: String(d.module), zaehlen: d.module },
 	d.zimmer != null && { label: "Zimmer", wert: zahl.format(d.zimmer), zaehlen: d.zimmer },
 	d.baeder != null && { label: "Bäder", wert: String(d.baeder), zaehlen: d.baeder },
 	d.lieferzeit && { label: "Lieferzeit", wert: d.lieferzeit },
@@ -73,7 +73,7 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 				)
 			}
 			<div class="kopf-text container">
-				<p class="ort" data-reveal>Modulhaus</p>
+				<p class="ort kicker" data-reveal>Modulhaus</p>
 				<h1 data-reveal style="--i: 1" {...haus.edit.title}>{d.title}</h1>
 			</div>
 		</header>
@@ -398,9 +398,8 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 		padding-bottom: var(--spacing-3xl);
 	}
 
-	.ort {
-		font-size: var(--font-size-lg);
-		opacity: 0.9;
+	.kopf:not(.ohne-bild) .ort {
+		color: var(--gold-hell);
 	}
 
 	.kopf h1 {

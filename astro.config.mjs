@@ -71,6 +71,15 @@ export default defineConfig({
 			weights: [300, 400, 500],
 			fallbacks: ["sans-serif"],
 		},
+		{
+			// Titel-Schrift (Design-Variante B)
+			provider: fontProviders.google(),
+			name: "Instrument Serif",
+			cssVariable: "--font-serif",
+			weights: [400],
+			styles: ["normal", "italic"],
+			fallbacks: ["Georgia", "serif"],
+		},
 	],
 	devToolbar: { enabled: false },
 });

@@ -39,6 +39,12 @@ async function widgets(name: string) {
 const ablauf = await widgets("ablauf");
 const fragen = await widgets("faq");
 const anzahl = haeuser.length;
+// Slogan: letztes Wort kursiv in Gold
+const sloganTeile = slogan.trim().split(/\s+/);
+const sloganLetztes = sloganTeile.length > 1 ? sloganTeile.pop() : "";
+const sloganVorne = sloganTeile.join(" ");
+const zahlwoerter = ["", "Ein", "Zwei", "Drei", "Vier", "Fünf", "Sechs", "Sieben", "Acht", "Neun", "Zehn", "Elf", "Zwölf"];
+const anzahlWort = zahlwoerter[anzahl] ?? String(anzahl);
 // Festes Titelbild (public/titelbild.webp, .jpg für Vorschauen in Messengern)
 const heroBild = { src: "/titelbild.webp", width: 1600, height: 900, alt: "Modulhaus aus Holz im Garten, umgeben von Wald" };
 const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
@@ -62,7 +68,8 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 			</div>
 		)}
 		<div class="hero-inhalt container">
-			<h1 data-zeilen style="--start: 250ms">{slogan}</h1>
+			<p class="kicker" data-reveal>Ludwig Living Group<span class="kicker-zusatz">&nbsp;· Dillingen/Saar</span></p>
+			<h1 data-zeilen style="--start: 250ms">{sloganVorne}{sloganLetztes && <> <em>{sloganLetztes}</em></>}</h1>
 			{anzahl > 0 && (
 				<a href="#modelle" class:list={["btn", heroBild ? "btn-hell" : "btn-dunkel"]} data-reveal style="--i: 7">
 					Modelle ansehen
@@ -84,11 +91,12 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 			</section>
 		) : (
 			<section class="haeuser container" id="modelle">
-				<header class="haeuser-kopf" data-linie>
-					<h2 data-zeilen>Unsere Modelle</h2>
-					<div class="kopf-rechts" data-reveal style="--i: 2">
-						<p>{anzahl === 1 ? "Ein Modell" : `${anzahl} Modelle`}, Grundriss und Ausstattung anpassbar</p>
+				<header class="haeuser-kopf">
+					<div>
+						<p class="kicker" data-reveal>Unsere Modelle</p>
+						<h2 data-zeilen>{anzahlWort} {anzahl === 1 ? "Haus" : "Häuser"}, <em>ein</em> Ansprechpartner</h2>
 					</div>
+					<p class="kopf-rechts" data-reveal style="--i: 2">Grundriss und Ausstattung lassen sich bei jedem Modell anpassen.</p>
 				</header>
 				<div class="raster" data-karussell data-staffel role="region" aria-label="Modelle" tabindex="0">
 					{haeuser.map((haus) => (
@@ -101,16 +109,18 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 								)}
 							</div>
 							<div class="kachel-text">
-								<h3>{haus.data.title}</h3>
-								<p>
-									{[
-										haus.data.wohnflaeche != null && `${zahl.format(haus.data.wohnflaeche)} m²`,
-										haus.data.module != null && `${haus.data.module} Container`,
-										haus.data.zimmer != null && `${zahl.format(haus.data.zimmer)} Zimmer`,
-									]
-										.filter(Boolean)
-										.join("  |  ")}
-								</p>
+								<div>
+									<h3>{haus.data.title}</h3>
+									<p>
+										{[
+											haus.data.wohnflaeche != null && `${zahl.format(haus.data.wohnflaeche)} m²`,
+											haus.data.zimmer != null && `${zahl.format(haus.data.zimmer)} Zimmer`,
+										]
+											.filter(Boolean)
+											.join(" · ")}
+									</p>
+								</div>
+								<span class="kachel-pfeil" aria-hidden="true">→</span>
 							</div>
 						</a>
 					))}
@@ -123,6 +133,7 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 		ablauf.length > 0 && (
 			<section class="ablauf-bereich" id="ablauf" aria-labelledby="ablauf-titel">
 				<div class="container">
+					<p class="kicker" data-reveal>Ablauf</p>
 					<h2 id="ablauf-titel" class="bereich-titel" data-zeilen data-linie>So funktioniert es</h2>
 					<ol class="ablauf" data-staffel data-zeitstrahl style={`--n: ${ablauf.length}`}>
 						{ablauf.map((schritt: any) => (
@@ -180,8 +191,6 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 	.hero-bild {
 		position: absolute;
 		inset: 0;
-		-webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
-		mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
 	}
 
 	.hero-bild :global(img) {
@@ -196,23 +205,31 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 		content: "";
 		position: absolute;
 		inset: 0;
-		background: linear-gradient(to top, rgb(0 0 0 / 0.6) 25%, rgb(0 0 0 / 0.5) 50%, rgb(0 0 0 / 0.12) 85%);
+		background:
+			linear-gradient(180deg, rgb(0 0 0 / 0.35) 0%, rgb(0 0 0 / 0) 25%, rgb(0 0 0 / 0.2) 55%, rgb(0 0 0 / 0.6) 100%),
+			linear-gradient(90deg, rgb(0 0 0 / 0.45) 0%, rgb(0 0 0 / 0) 55%);
 	}
 
 	/* Titel sitzt über der Ausblendung, nicht im hellen Bereich */
 	.hero-inhalt {
 		position: relative;
 		width: 100%;
-		padding-bottom: clamp(11rem, 34vh, 20rem);
+		padding-bottom: clamp(4rem, 11vh, 7rem);
 	}
 
 	/* Weicher Schatten statt Umrandung: hebt den Titel vom Bild ab */
+	.hero .kicker,
+	.hero h1 :global(em) {
+		color: var(--gold-hell);
+	}
+
 	.hero h1 {
 		text-shadow: 0 2px 28px rgb(0 0 0 / 0.45), 0 1px 3px rgb(0 0 0 / 0.3);
-		font-size: clamp(2.5rem, 6vw, 5rem);
+		font-size: clamp(3rem, 6.4vw, 5.6rem);
 		font-weight: 400;
-		line-height: 1.08;
+		line-height: 1;
 		letter-spacing: -0.01em;
+		margin-top: var(--spacing-md);
 		max-width: 15ch;
 		text-wrap: balance;
 		margin-bottom: var(--spacing-2xl);
@@ -233,29 +250,22 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 	.haeuser-kopf {
 		display: flex;
 		justify-content: space-between;
-		align-items: baseline;
+		align-items: flex-end;
 		gap: var(--spacing-lg);
 		flex-wrap: wrap;
-		padding-bottom: var(--spacing-lg);
 		margin-bottom: var(--spacing-2xl);
-		border-bottom: 1px solid var(--color-border);
 	}
 
 	.haeuser-kopf h2 {
-		font-size: clamp(1.75rem, 3vw, 2.5rem);
-		font-weight: 300;
+		font-size: clamp(2.1rem, 4vw, 3rem);
+		font-weight: 400;
+		line-height: 1.05;
 	}
 
-	.haeuser-kopf p {
-		color: var(--color-muted);
-	}
-
-	/* Modelle als Karussell: 3 nebeneinander, mit der Maus ziehen oder wischen */
 	.kopf-rechts {
-		display: flex;
-		align-items: center;
-		gap: var(--spacing-lg);
-		flex-wrap: wrap;
+		color: var(--color-muted);
+		max-width: 22rem;
+		line-height: 1.6;
 	}
 
 	/* Karussell geht über die ganze Bildschirmbreite; das aktive Modell steht
@@ -358,36 +368,49 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 		right: 0;
 		bottom: 0;
 		padding: var(--spacing-xl);
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		gap: var(--spacing-md);
+	}
+
+	.kachel-text > div {
+		min-width: 0;
 	}
 
 	.kachel-text h3 {
-		font-size: var(--font-size-2xl);
+		font-size: clamp(1.6rem, 2.2vw, 2rem);
 		font-weight: 400;
-	}
-
-	/* Beim Darüberfahren erscheint ein Pfeil neben dem Namen */
-	.kachel-text h3::after {
-		content: "→";
-		display: inline-block;
-		margin-left: 0.4em;
-		opacity: 0;
-		transform: translateX(-10px);
-		transition: opacity 400ms ease, transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
-	}
-
-	.kachel:hover .kachel-text h3::after,
-	.kachel:focus-visible .kachel-text h3::after {
-		opacity: 1;
-		transform: none;
+		line-height: 1.1;
 	}
 
 	.kachel-text p {
 		margin-top: var(--spacing-xs);
-		font-size: var(--font-size-sm);
-		opacity: 0.85;
-		white-space: pre;
+		font-size: 0.75rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		opacity: 0.9;
+		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+
+	/* Goldener Pfeil-Rahmen; füllt sich beim Darüberfahren */
+	.kachel-pfeil {
+		flex-shrink: 0;
+		width: 2.5rem;
+		height: 2.5rem;
+		display: grid;
+		place-items: center;
+		border: 1px solid var(--gold);
+		color: var(--gold);
+		transition: background-color 400ms ease, color 400ms ease;
+	}
+
+	.kachel:hover .kachel-pfeil,
+	.kachel:focus-visible .kachel-pfeil {
+		background: var(--gold);
+		color: #ffffff;
 	}
 
 	.leer {
@@ -407,15 +430,16 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 	}
 
 	.bereich-titel {
-		font-size: clamp(1.75rem, 3vw, 2.5rem);
-		font-weight: 300;
+		font-size: clamp(2.1rem, 4vw, 3rem);
+		font-weight: 400;
+		line-height: 1.05;
 		padding-bottom: var(--spacing-lg);
 		margin-bottom: var(--spacing-2xl);
 		border-bottom: 1px solid var(--color-border);
 	}
 
 	.ablauf-bereich {
-		background: var(--color-surface);
+		background: var(--color-sand);
 		padding: var(--spacing-4xl) 0;
 	}
 
@@ -448,7 +472,7 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 	}
 
 	.ablauf.zeitstrahl::after {
-		background: var(--color-text);
+		background: var(--gold);
 		transition: transform 200ms linear;
 	}
 
@@ -459,8 +483,8 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 		width: 13px;
 		height: 13px;
 		border-radius: 50%;
-		border: 1.5px solid var(--color-muted);
-		background: var(--color-surface);
+		border: 1.5px solid var(--gold);
+		background: var(--color-sand);
 		transition:
 			background-color 400ms ease,
 			border-color 400ms ease,
@@ -468,8 +492,8 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 	}
 
 	.ablauf.zeitstrahl li.aktiv::after {
-		background: var(--color-text);
-		border-color: var(--color-text);
+		background: var(--gold);
+		border-color: var(--gold);
 		transform: scale(1.25);
 	}
 
@@ -478,7 +502,7 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 	}
 
 	.ablauf.zeitstrahl li.aktiv::before {
-		color: var(--color-text);
+		color: var(--gold);
 	}
 
 	/* Breit: Schritte nebeneinander, Linie waagrecht über den Nummern */
@@ -538,16 +562,18 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 
 	/* Die Nummer zeigt die Reihenfolge der Schritte */
 	.ablauf li::before {
-		content: counter(schritt);
+		content: counter(schritt, decimal-leading-zero);
 		display: block;
+		font-family: var(--font-heading);
 		font-size: 2.75rem;
-		font-weight: 300;
+		font-weight: 400;
 		line-height: 1;
 		margin-bottom: var(--spacing-md);
-		color: var(--color-muted);
+		color: var(--gold);
 	}
 
 	.ablauf h3 {
+		font-family: var(--font-body);
 		font-size: var(--font-size-lg);
 		font-weight: 500;
 		margin-bottom: var(--spacing-sm);
@@ -644,6 +670,10 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 	}
 
 	@media (max-width: 640px) {
+		.kicker-zusatz {
+			display: none;
+		}
+
 		.hero {
 			min-height: 80vh;
 		}

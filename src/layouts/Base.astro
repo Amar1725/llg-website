@@ -100,6 +100,7 @@ const isLoggedIn = !!Astro.locals.user;
 		<link rel="manifest" href="/site.webmanifest" />
 		<meta name="theme-color" content="#1c1d1e" />
 		<Font cssVariable="--font-body" preload />
+		<Font cssVariable="--font-serif" preload />
 		<script is:inline>
 			// Kontaktformular bei jedem Seitenaufruf leer starten: das Forms-Plugin
 			// merkt sich Eingaben sonst im Browser und füllt sie auf anderen Seiten wieder ein.
@@ -508,7 +509,7 @@ const isLoggedIn = !!Astro.locals.user;
 			}
 
 			.site-logo {
-				font-family: var(--font-heading);
+				font-family: var(--font-body);
 				font-size: var(--font-size-lg);
 				font-weight: 500;
 				letter-spacing: 0.32em;
@@ -592,7 +593,7 @@ const isLoggedIn = !!Astro.locals.user;
 			}
 
 			.footer-logo {
-				font-family: var(--font-heading);
+				font-family: var(--font-body);
 				font-size: var(--font-size-xl);
 				font-weight: 400;
 				letter-spacing: var(--tracking-tight);
@@ -640,6 +641,7 @@ const isLoggedIn = !!Astro.locals.user;
 			}
 
 			.footer-col h4 {
+				font-family: var(--font-body);
 				font-size: var(--font-size-sm);
 				font-weight: 600;
 				margin-bottom: var(--spacing-md);

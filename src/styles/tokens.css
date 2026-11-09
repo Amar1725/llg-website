@@ -61,7 +61,7 @@
 		); /* hero headline text fill */
 
 		/* Typography */
-		--font-heading: var(--font-body);
+		--font-heading: var(--font-serif, var(--font-body));
 		--font-weight-heading: 700; /* h2-h6, card titles */
 		--font-weight-display: 800; /* hero and section headlines, logo */
 

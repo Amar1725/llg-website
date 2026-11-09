@@ -46,14 +46,14 @@
 	margin-bottom: -0.12em;
 }
 
-.bewegt [data-zeilen] .wort > span {
+.bewegt [data-zeilen] .wort > * {
 	display: inline-block;
 	transform: translate3d(0, 110%, 0);
 	transition: transform 1000ms var(--anim-kurve);
 	transition-delay: calc(var(--w, 0) * 55ms + var(--start, 0ms));
 }
 
-.bewegt [data-zeilen].sichtbar .wort > span {
+.bewegt [data-zeilen].sichtbar .wort > * {
 	transform: none;
 }
 
