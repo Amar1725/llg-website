@@ -68,7 +68,7 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 			</div>
 		)}
 		<div class="hero-inhalt container">
-			<p class="kicker" data-reveal>Ludwig Living Group<span class="kicker-zusatz">&nbsp;· Dillingen/Saar</span></p>
+			<p class="kicker" data-reveal>Ludwig Living Group</p>
 			<h1 data-zeilen style="--start: 250ms">{sloganVorne}{sloganLetztes && <> <em>{sloganLetztes}</em></>}</h1>
 			{anzahl > 0 && (
 				<a href="#modelle" class:list={["btn", heroBild ? "btn-hell" : "btn-dunkel"]} data-reveal style="--i: 7">
@@ -670,10 +670,6 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 	}
 
 	@media (max-width: 640px) {
-		.kicker-zusatz {
-			display: none;
-		}
-
 		.hero {
 			min-height: 80vh;
 		}
