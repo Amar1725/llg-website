@@ -110,7 +110,7 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 						<a href={`/modelle/${haus.id}`} class="kachel" data-kachel>
 							<div class="kachel-bild" style={`view-transition-name: modell-${haus.id}`}>
 								{haus.data.titelbild ? (
-									<Image image={haus.data.titelbild} />
+									<Image image={haus.data.titelbild} placeholder={false} />
 								) : (
 									<span class="platzhalter">Noch kein Titelbild</span>
 								)}

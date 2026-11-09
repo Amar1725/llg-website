@@ -116,7 +116,7 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 					<div class="galerie" data-staffel {...haus.edit.galerie}>
 						{galerie.map((row) => (
 							<button type="button" class="galerie-bild" data-vorhang aria-label="Bild groß anzeigen">
-								<Image image={row.bild} />
+								<Image image={row.bild} placeholder={false} />
 							</button>
 						))}
 					</div>
