@@ -793,11 +793,8 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 		window.addEventListener("resize", aktualisieren);
 		aktualisieren();
 
-		// Ab drei Modellen mit dem zweiten in der Mitte starten, damit links und
-		// rechts je ein Nachbar hervorschaut
-		if (raster.querySelectorAll(".kachel").length >= 3) {
-			raster.scrollTo({ left: schritt(), behavior: "instant" as ScrollBehavior });
-		}
+		// Immer mit dem ersten Modell in der Mitte starten
+		raster.scrollTo({ left: 0, behavior: "instant" as ScrollBehavior });
 	}
 
 	karussellStarten();
