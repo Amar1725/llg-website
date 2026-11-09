@@ -69,21 +69,6 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 				</a>
 			)}
 		</div>
-		{heroBild && anzahl > 0 && (
-			<a href="#modelle" class="abzeichen" aria-label="Zu den Modellen">
-				<svg class="ring" viewBox="0 0 132 132" aria-hidden="true">
-					<defs>
-						<path id="abzeichen-kreis" d="M66,66 m-52,0 a52,52 0 1,1 104,0 a52,52 0 1,1 -104,0" />
-					</defs>
-					<text>
-						<textPath href="#abzeichen-kreis" textLength="324" lengthAdjust="spacing">Modelle ansehen · Modelle ansehen · </textPath>
-					</text>
-				</svg>
-				<span class="pfeil-runter">
-					<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="5,9 12,16 19,9" /></svg>
-				</span>
-			</a>
-		)}
 	</section>
 
 	{
