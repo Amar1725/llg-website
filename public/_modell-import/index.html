@@ -31,12 +31,39 @@ const ALT = ["kubus-40", "duo-80", "atrium-160", "test", "test-2", "test-3"];
 const logEl = document.getElementById("log");
 const log = (t, k) => { const s = document.createElement("div"); if (k) s.className = k; s.textContent = t; logEl.append(s); s.scrollIntoView({ block: "nearest" }); };
 
+const warten = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// Wiederholt bei Serverfehlern (z. B. 1102 / 5xx) bis zu 5-mal mit Pause
 async function api(pfad, opt = {}) {
-	const r = await fetch(API + pfad, { credentials: "same-origin", ...opt, headers: { ...KOPF, ...(opt.headers || {}) } });
-	let j = null;
-	try { j = await r.json(); } catch {}
-	if (!r.ok || (j && j.success === false)) throw new Error(`${r.status} ${j?.error?.message || j?.error?.code || r.statusText}`);
-	return j?.data ?? j;
+	for (let versuch = 1; ; versuch++) {
+		let r, j = null;
+		try {
+			r = await fetch(API + pfad, { credentials: "same-origin", ...opt, headers: { ...KOPF, ...(opt.headers || {}) } });
+			try { j = await r.json(); } catch {}
+		} catch (netz) {
+			r = { ok: false, status: 0, statusText: netz.message };
+		}
+		if (r.ok && !(j && j.success === false)) return j?.data ?? j;
+		const meldung = `${r.status} ${j?.error?.message || j?.error?.code || r.statusText}`;
+		if ((r.status === 0 || r.status >= 500) && versuch < 5) {
+			log(`  Serverfehler (${meldung}), neuer Versuch ${versuch + 1}/5 …`);
+			await warten(2500 * versuch);
+			continue;
+		}
+		throw new Error(meldung);
+	}
+}
+
+// Kleines Vorschaubild (48px breit): der Server berechnet den Platzhalter daraus
+// statt aus dem grossen Foto, das spart sehr viel Rechenzeit pro Upload.
+async function vorschau(blob) {
+	const bmp = await createImageBitmap(blob);
+	const b = 48, h = Math.max(1, Math.round(bmp.height * b / bmp.width));
+	const c = document.createElement("canvas");
+	c.width = b; c.height = h;
+	c.getContext("2d").drawImage(bmp, 0, 0, b, h);
+	bmp.close?.();
+	return await new Promise((ok) => c.toBlob(ok, "image/jpeg", 0.8));
 }
 
 async function alleEintraege() {
@@ -57,6 +84,7 @@ async function bildHochladen(b) {
 	fd.append("width", String(b.breite));
 	fd.append("height", String(b.hoehe));
 	fd.append("deduplicate", "true");
+	fd.append("thumbnail", new File([await vorschau(blob)], "vorschau.jpg", { type: "image/jpeg" }));
 	const d = await api("/media", { method: "POST", body: fd });
 	const m = d.item;
 	return {
@@ -79,10 +107,17 @@ document.getElementById("los").addEventListener("click", async (e) => {
 		await api("/auth/me").catch(() => { throw new Error("Nicht angemeldet. Bitte zuerst unter /_emdash/admin anmelden."); });
 		const daten = await (await fetch("/_modell-import/daten.json")).json();
 		const vorhanden = await alleEintraege();
-		const slugs = new Set(vorhanden.map((x) => x.slug));
+		const nachSlug = new Map(vorhanden.map((x) => [x.slug, x]));
 
 		for (const m of daten) {
-			if (slugs.has(m.slug)) { log(`${m.titel}: schon vorhanden, übersprungen`); continue; }
+			const da = nachSlug.get(m.slug);
+			if (da) {
+				if (da.status !== "published") {
+					await api(`/content/hauser/${da.id}/publish`, { method: "POST" });
+					log(`${m.titel}: war schon angelegt, jetzt veröffentlicht`, "ok");
+				} else log(`${m.titel}: schon vorhanden, übersprungen`);
+				continue;
+			}
 			log(`${m.titel}: ${m.bilder.length} Bilder werden hochgeladen …`);
 			const bilder = [];
 			for (const b of m.bilder) bilder.push(await bildHochladen(b));
