@@ -195,7 +195,7 @@ const isLoggedIn = !!Astro.locals.user;
 						{ label: "Startseite", url: "/" },
 						{ label: "Modelle", url: "/#modelle" },
 						{ label: "So funktioniert es", url: "/#ablauf" },
-						{ label: "Häufige Fragen", url: "/#fragen" },
+						{ label: "Über uns", url: "/ueber-uns" },
 						...(menu?.items ?? []).map((item) => ({ label: item.label, url: item.url })),
 						{ label: "Kontakt", url: "/kontakt" },
 					].map((eintrag, i) => (
@@ -270,6 +270,7 @@ const isLoggedIn = !!Astro.locals.user;
 					&copy; {new Date().getFullYear()} {siteTitle}. Alle Rechte vorbehalten.
 				</p>
 				<nav class="footer-recht" aria-label="Rechtliches">
+					<a href="/ueber-uns">Über uns</a>
 					<a href="/kontakt">Kontakt</a>
 					<a href="/impressum">Impressum</a>
 					<a href="/datenschutz">Datenschutz</a>

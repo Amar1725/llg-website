@@ -1,0 +1,99 @@
+---
+// Seite "Über uns": Abschnitte aus dem Widget-Bereich "ueber-uns".
+// Im Admin unter "Widgets" bearbeitbar; jedes Widget ist ein Abschnitt,
+// sein Titel die Zwischenüberschrift.
+import { getWidgetArea } from "emdash";
+import { PortableText } from "emdash/ui";
+import Base from "../layouts/Base.astro";
+
+let abschnitte: any[] = [];
+try {
+	const area = await getWidgetArea("ueber-uns");
+	abschnitte = (area?.widgets ?? []).filter((w: any) => w.type === "content");
+} catch {
+	abschnitte = [];
+}
+---
+
+<Base title="Über uns" description="Wer hinter der Ludwig Living Group steht und mit wem wir Modellhäuser umsetzen.">
+	<article class="ueber container">
+		<p class="kicker" data-reveal>Ludwig Living Group</p>
+		<h1 data-zeilen>Über uns</h1>
+		{
+			abschnitte.length === 0 ? (
+				<p class="hinweis">Für diese Seite ist noch kein Text hinterlegt. Er wird im Admin unter „Widgets“ im Bereich „Über uns“ eingetragen.</p>
+			) : (
+				abschnitte.map((w, i) => (
+					<section class="abschnitt" data-reveal style={`--i: ${i}`}>
+						{w.title && <h2>{w.title}</h2>}
+						<div class="text">{w.content && <PortableText value={w.content} />}</div>
+					</section>
+				))
+			)
+		}
+		<div class="aufruf" data-reveal>
+			<a href="/kontakt" class="btn btn-dunkel">Kontakt aufnehmen</a>
+		</div>
+	</article>
+</Base>
+
+<style>
+	.ueber {
+		padding-top: var(--spacing-4xl);
+		padding-bottom: var(--spacing-5xl);
+		max-width: 860px;
+	}
+
+	.kicker {
+		font-size: 0.78rem;
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		color: var(--color-muted);
+		margin-bottom: var(--spacing-sm);
+	}
+
+	h1 {
+		font-size: clamp(2.5rem, 6vw, 4.25rem);
+		font-weight: 300;
+		margin-bottom: var(--spacing-3xl);
+	}
+
+	.abschnitt {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--spacing-md);
+		padding: var(--spacing-2xl) 0;
+		border-top: 1px solid var(--color-border);
+	}
+
+	@media (min-width: 760px) {
+		.abschnitt {
+			grid-template-columns: 220px minmax(0, 1fr);
+			gap: var(--spacing-2xl);
+		}
+	}
+
+	h2 {
+		font-size: var(--font-size-lg);
+		font-weight: 500;
+		margin: 0;
+	}
+
+	.text :global(p) {
+		white-space: pre-line;
+		line-height: 1.7;
+		margin: 0;
+	}
+
+	.text :global(p + p) {
+		margin-top: var(--spacing-md);
+	}
+
+	.aufruf {
+		margin-top: var(--spacing-3xl);
+	}
+
+	.hinweis {
+		color: var(--color-muted);
+	}
+</style>
