@@ -1,11 +1,10 @@
 ---
-// Startseite: großes Titelbild (erstes Modell) mit Slogan, darunter alle
+// Startseite: großes Titelbild (fest, public/titelbild.webp) mit Slogan, darunter alle
 // veröffentlichten Modelle (Sammlung "hauser") als Bildkacheln, danach
 // "So funktioniert es" und "Häufige Fragen" aus den Widget-Bereichen.
 import { getEmDashCollection, getSiteSettingsWithCacheHint, getWidgetArea } from "emdash";
 import { Image, PortableText } from "emdash/ui";
 import Base from "../layouts/Base.astro";
-import { bildUrl } from "../lib/teilen";
 
 let haeuser: any[] = [];
 try {
@@ -40,8 +39,9 @@ async function widgets(name: string) {
 const ablauf = await widgets("ablauf");
 const fragen = await widgets("faq");
 const anzahl = haeuser.length;
-const heroBild = haeuser.find((h) => h.data.titelbild)?.data.titelbild;
-const teilenBild = bildUrl(heroBild, Astro.url.origin);
+// Festes Titelbild (public/titelbild.webp, .jpg für Vorschauen in Messengern)
+const heroBild = { src: "/titelbild.webp", width: 1600, height: 900, alt: "Modellhaus aus Holz im Garten, umgeben von Wald" };
+const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 
 ---
 
@@ -51,8 +51,8 @@ const teilenBild = bildUrl(heroBild, Astro.url.origin);
 			<div class="hero-bild" data-titelbild data-parallax>
 				{/* Sofort laden (nicht lazy), da es das erste sichtbare Bild ist */}
 				<img
-					src={teilenBild}
-					alt={heroBild.alt || ""}
+					src={heroBild.src}
+					alt={heroBild.alt}
 					width={heroBild.width}
 					height={heroBild.height}
 					loading="eager"
