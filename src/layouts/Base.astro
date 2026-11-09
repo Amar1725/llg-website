@@ -45,7 +45,7 @@ if (Astro.cache?.enabled) {
 }
 
 const settings = settingsResult.data;
-const siteTitle = settings?.title || "Modellhäuser";
+const siteTitle = settings?.title || "Modulhäuser";
 const fullTitle = title ? (title.includes(siteTitle) ? title : `${title} — ${siteTitle}`) : siteTitle;
 const siteDescription =
 	settings?.tagline || "";

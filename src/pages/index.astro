@@ -22,8 +22,8 @@ try {
 const settingsResult = await getSiteSettingsWithCacheHint();
 if (Astro.cache?.enabled) Astro.cache.set(settingsResult.cacheHint);
 const settings = settingsResult.data;
-const titel = settings?.title || "Modellhäuser";
-const slogan = settings?.tagline || "Modellhäuser, fertig geplant und geliefert";
+const titel = settings?.title || "Modulhäuser";
+const slogan = settings?.tagline || "Modulhäuser, fertig geplant und geliefert";
 
 const zahl = new Intl.NumberFormat("de-DE");
 
@@ -40,7 +40,7 @@ const ablauf = await widgets("ablauf");
 const fragen = await widgets("faq");
 const anzahl = haeuser.length;
 // Festes Titelbild (public/titelbild.webp, .jpg für Vorschauen in Messengern)
-const heroBild = { src: "/titelbild.webp", width: 1600, height: 900, alt: "Modellhaus aus Holz im Garten, umgeben von Wald" };
+const heroBild = { src: "/titelbild.webp", width: 1600, height: 900, alt: "Modulhaus aus Holz im Garten, umgeben von Wald" };
 const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 
 ---
