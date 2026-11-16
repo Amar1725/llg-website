@@ -105,7 +105,10 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 						</dl>
 					)
 				}
-				<p class="hinweis-individuell">Beispielmodell – innen und außen in verschiedenen Qualitätsstufen individuell anpassbar.</p>
+				<div class="hinweis-individuell">
+					<p class="hinweis-titel">Beispielmodell</p>
+					<p>Innen und außen in verschiedenen Qualitätsstufen individuell anpassbar.</p>
+				</div>
 				<a href="#anfrage" class="btn btn-dunkel anfrage">Angebot anfragen</a>
 			</aside>
 		</div>
@@ -508,10 +511,28 @@ const ausstattung: string[] = typeof d.ausstattung === "string"
 		margin-top: var(--spacing-xl);
 	}
 
+	/* Hinweis: Beispielmodell, individuell anpassbar */
 	.hinweis-individuell {
 		margin: var(--spacing-lg) 0 0;
+		padding: var(--spacing-md);
+		border: 1px solid var(--gold);
+		background: var(--color-bg);
 		font-size: var(--font-size-sm);
-		color: var(--color-muted);
+		line-height: 1.55;
+		color: var(--color-text);
+	}
+
+	.hinweis-individuell p {
+		margin: 0;
+	}
+
+	.hinweis-individuell .hinweis-titel {
+		margin-bottom: 0.3rem;
+		font-size: 0.7rem;
+		font-weight: 500;
+		letter-spacing: 0.24em;
+		text-transform: uppercase;
+		color: #8a6d3b;
 	}
 
 	.galerie-bereich {

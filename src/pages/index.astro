@@ -43,8 +43,6 @@ const anzahl = haeuser.length;
 const sloganTeile = slogan.trim().split(/\s+/);
 const sloganLetztes = sloganTeile.length > 1 ? sloganTeile.pop() : "";
 const sloganVorne = sloganTeile.join(" ");
-const zahlwoerter = ["", "Ein", "Zwei", "Drei", "Vier", "Fünf", "Sechs", "Sieben", "Acht", "Neun", "Zehn", "Elf", "Zwölf"];
-const anzahlWort = zahlwoerter[anzahl] ?? String(anzahl);
 // Festes Titelbild (public/titelbild.webp, .jpg für Vorschauen in Messengern)
 const heroBild = { src: "/titelbild.webp", width: 1600, height: 900, alt: "Modulhaus aus Holz im Garten, umgeben von Wald" };
 const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
@@ -94,9 +92,12 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 				<header class="haeuser-kopf">
 					<div>
 						<p class="kicker" data-reveal>Unsere Modelle</p>
-						<h2 data-zeilen>{anzahlWort} {anzahl === 1 ? "Haus" : "Häuser"}, <em>ein</em> Ansprechpartner</h2>
+						<h2 data-zeilen>Verschiedenste Modelle, <em>ein</em> Ansprechpartner</h2>
 					</div>
-					<p class="kopf-rechts" data-reveal style="--i: 2">Unsere Modelle dienen als Beispiele. Auf Wunsch fertigen wir jedes Haus individuell, innen wie außen in verschiedenen Qualitätsstufen, von Standard bis gehoben.</p>
+					<div class="kopf-rechts" data-reveal style="--i: 2">
+						<p class="hinweis-titel">Individuell geplant</p>
+						<p>Unsere Modelle dienen als Beispiele. Auf Wunsch fertigen wir jedes Haus individuell, innen wie außen in verschiedenen Qualitätsstufen, von Standard bis gehoben.</p>
+					</div>
 				</header>
 				<div class="raster" data-karussell data-staffel role="region" aria-label="Modelle" tabindex="0">
 					{haeuser.map((haus) => (
@@ -262,10 +263,27 @@ const teilenBild = new URL("/titelbild.jpg", Astro.url.origin).href;
 		line-height: 1.05;
 	}
 
+	/* Hinweis: Modelle sind Beispiele, alles individuell anpassbar */
 	.kopf-rechts {
-		color: var(--color-muted);
-		max-width: 22rem;
+		max-width: 26rem;
+		padding: var(--spacing-md) var(--spacing-lg);
+		border: 1px solid var(--gold);
+		background: #f4f1ea;
+		color: var(--color-text);
 		line-height: 1.6;
+	}
+
+	.kopf-rechts p {
+		margin: 0;
+	}
+
+	.kopf-rechts .hinweis-titel {
+		margin-bottom: 0.35rem;
+		font-size: 0.75rem;
+		font-weight: 500;
+		letter-spacing: 0.24em;
+		text-transform: uppercase;
+		color: #8a6d3b;
 	}
 
 	/* Karussell geht über die ganze Bildschirmbreite; das aktive Modell steht
