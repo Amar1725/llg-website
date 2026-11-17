@@ -1,4 +1,5 @@
 import handler, { createScheduledHandler, PluginBridge } from "@emdash-cms/cloudflare/worker";
+import { wartungAntwort } from "./wartung";
 
 export { PluginBridge };
 
@@ -7,6 +8,11 @@ export default {
 	// Den Header "Server-Timing" entfernen: EmDash zeigt darin interne Messwerte
 	// (Datenbank-Abfragen, Ladezeiten), die Besucher nicht sehen müssen.
 	async fetch(request, env, ctx) {
+		// Baustellen-Seite, solange WARTUNG in wrangler.jsonc auf "an" steht
+		if ((env as { WARTUNG?: string }).WARTUNG === "an") {
+			const wartung = wartungAntwort(request);
+			if (wartung) return wartung;
+		}
 		const response = await handler.fetch!(request, env, ctx);
 		if (!response.headers.has("server-timing") || response.status === 101) return response;
 		const bereinigt = new Response(response.body, response);

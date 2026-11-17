@@ -33,6 +33,11 @@
 			"jurisdiction": "eu"
 		}
 	],
+	// Baustellen-Seite: "an" = Besucher sehen nur die Seite "Website im Aufbau"
+	// (Admin, Impressum und Datenschutz bleiben erreichbar). "aus" = normale Website.
+	"vars": {
+		"WARTUNG": "an"
+	},
 	"triggers": {
 		"crons": ["0 2 * * *"]
 	}
